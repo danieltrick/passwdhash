@@ -111,10 +111,8 @@ public class PasswordHasher_AES implements PasswordHasher {
 		concat(key0.bytes, state0, state1);
 		concat(key1.bytes, state1, state0);
 
-		if (Arrays.equals(key0.bytes, key1.bytes)) {
-			key0.bytes[0] = (byte) ((key0.bytes[0] & 0x9F) | 0x40);
-			key1.bytes[0] = (byte) ((key0.bytes[0] & 0x9F) | 0x20);
-		}
+		key0.bytes[0] = (byte) ((key0.bytes[0] & 0x9F) | 0x40);
+		key1.bytes[0] = (byte) ((key0.bytes[0] & 0x9F) | 0x20);
 
 		compressBlock(key0, state0, data, dataOffset);
 		compressBlock(key1, state1, data, dataOffset);
@@ -143,7 +141,7 @@ public class PasswordHasher_AES implements PasswordHasher {
 	}
 
 	private static void concat(final byte[] dst, final byte[] src0, final byte[] src1) {
-		System.arraycopy(src0, 0, dst, 0, BLOCK_SIZE);
+		System.arraycopy(src0, 0, dst,          0, BLOCK_SIZE);
 		System.arraycopy(src1, 0, dst, BLOCK_SIZE, BLOCK_SIZE);
 	}
 

@@ -66,4 +66,12 @@ public class Utilities {
 			return Long.MAX_VALUE;
 		}
 	}
+
+	public static int multiplySaturating(final int a, final int b) {
+		try {
+			return Math.multiplyExact(a, b);
+		} catch (final ArithmeticException e) {
+			return Integer.MAX_VALUE;
+		}
+	}
 }

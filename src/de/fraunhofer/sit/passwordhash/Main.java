@@ -2,6 +2,7 @@ package de.fraunhofer.sit.passwordhash;
 
 import static de.fraunhofer.sit.passwordhash.utils.Utilities.addSaturating;
 import static de.fraunhofer.sit.passwordhash.utils.Utilities.bytesToHex;
+import static de.fraunhofer.sit.passwordhash.utils.Utilities.multiplySaturating;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -28,8 +29,8 @@ public class Main {
 	private static final long ROUNDS = 9999L;
 
 	private static final int threadCount = Runtime.getRuntime().availableProcessors();
-	private static final ExecutorService executor = Executors.newFixedThreadPool(addSaturating(threadCount, 1));
-	
+	private static final ExecutorService executor = Executors.newFixedThreadPool(addSaturating(threadCount, 2));
+
 	private static volatile boolean collision = false;
 
 	public static void main(String[] args) throws IOException {
@@ -38,7 +39,7 @@ public class Main {
 			return;
 		}
 
-		final int queueSize = Math.multiplyExact(8, threadCount);
+		final int queueSize = multiplySaturating(8, threadCount);
 		final BlockingQueue<String> queue_src = new LinkedBlockingQueue<String>(queueSize);
 		final BlockingQueue<Entry<String, byte[]>> queue_dst = new LinkedBlockingQueue<Entry<String, byte[]>>(queueSize);
 
@@ -159,7 +160,7 @@ public class Main {
 					}
 
 					final boolean addedFlag = set.add(hashValue);
-					System.out.printf("q[%,d] %s <-- \"%s\"%n", set.size(), bytesToHex(hashValue), key);
+					System.out.printf("[%,d] %s <-- \"%s\"%n", set.size(), bytesToHex(hashValue), key);
 
 					if (!addedFlag) {
 						System.out.println("Collision detected! [key: \"" + key + "\"]");
