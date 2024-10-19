@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import de.fraunhofer.sit.passwordhash.hasher.PasswordHasher;
 import de.fraunhofer.sit.passwordhash.hasher.PasswordManager;
 import de.fraunhofer.sit.passwordhash.hasher.PasswordMode;
+import de.fraunhofer.sit.passwordhash.utils.CloseableSet;
 import de.fraunhofer.sit.passwordhash.utils.SqlHashSet;
 
 public class Main {
@@ -149,7 +150,7 @@ public class Main {
 		
 		@Override
 		public void run() {
-			try (final SqlHashSet set = new SqlHashSet()) {
+			try (final CloseableSet<byte[]> set = new SqlHashSet()) {
 				while (!Thread.interrupted()) {
 					final Entry<String, byte[]> currentEntry = queue.take();
 					final String key = currentEntry.getKey();
@@ -160,7 +161,7 @@ public class Main {
 					}
 
 					final boolean addedFlag = set.add(hashValue);
-					System.out.printf("[%,d] %s <-- \"%s\"%n", set.size(), bytesToHex(hashValue), key);
+					System.out.printf("[%,d] %s <-- \"%s\"%n", set.longSize(), bytesToHex(hashValue), key);
 
 					if (!addedFlag) {
 						System.out.println("Collision detected! [key: \"" + key + "\"]");
@@ -168,6 +169,9 @@ public class Main {
 						executor.shutdownNow();
 						return;
 					}
+				}
+				if (set.longSize() != set.count()) {
+					throw new AssertionError("Set count does not match its size!");
 				}
 			} catch (final InterruptedException e) {
 			} catch (final Exception e) {

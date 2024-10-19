@@ -111,8 +111,8 @@ public class PasswordHasher_AES implements PasswordHasher {
 		concat(key0.bytes, state0, state1);
 		concat(key1.bytes, state1, state0);
 
-		key0.bytes[0] = (byte) ((key0.bytes[0] & 0x9F) | 0x40);
-		key1.bytes[0] = (byte) ((key0.bytes[0] & 0x9F) | 0x20);
+		key0.bytes[0] &= 0xBF;
+		key1.bytes[0] |= 0x40;
 
 		compressBlock(key0, state0, data, dataOffset);
 		compressBlock(key1, state1, data, dataOffset);
