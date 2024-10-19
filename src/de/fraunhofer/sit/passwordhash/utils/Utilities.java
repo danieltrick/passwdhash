@@ -50,4 +50,20 @@ public class Utilities {
 
 		return bytes;
 	}
+
+	public static int addSaturating(final int a, final int b) {
+		try {
+			return Math.addExact(a, b);
+		} catch (final ArithmeticException e) {
+			return Integer.MAX_VALUE;
+		}
+	}
+
+	public static long addSaturating(final long a, final long b) {
+		try {
+			return Math.addExact(a, b);
+		} catch (final ArithmeticException e) {
+			return Long.MAX_VALUE;
+		}
+	}
 }

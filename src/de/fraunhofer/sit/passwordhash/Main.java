@@ -1,5 +1,6 @@
 package de.fraunhofer.sit.passwordhash;
 
+import static de.fraunhofer.sit.passwordhash.utils.Utilities.addSaturating;
 import static de.fraunhofer.sit.passwordhash.utils.Utilities.bytesToHex;
 
 import java.io.BufferedReader;
@@ -7,15 +8,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.sun.jna.platform.win32.Kernel32;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import de.fraunhofer.sit.passwordhash.hasher.PasswordHasher;
 import de.fraunhofer.sit.passwordhash.hasher.PasswordManager;
@@ -24,11 +25,12 @@ import de.fraunhofer.sit.passwordhash.utils.SqlHashSet;
 
 public class Main {
 
-	private static final int threadCount = Runtime.getRuntime().availableProcessors();
-	private static final ExecutorService executor = Executors.newFixedThreadPool(Math.addExact(threadCount, 1));
-	private static final AtomicBoolean collision = new AtomicBoolean(false);
-
 	private static final long ROUNDS = 9999L;
+
+	private static final int threadCount = Runtime.getRuntime().availableProcessors();
+	private static final ExecutorService executor = Executors.newFixedThreadPool(addSaturating(threadCount, 1));
+	
+	private static volatile boolean collision = false;
 
 	public static void main(String[] args) throws IOException {
 		if ((args.length < 1) || args[0].isEmpty()) {
@@ -36,18 +38,20 @@ public class Main {
 			return;
 		}
 
-		final SqlHashSet set = new SqlHashSet();
-		final BlockingQueue<String> queue = new LinkedBlockingQueue<String>(Math.multiplyExact(4, threadCount));
+		final int queueSize = Math.multiplyExact(8, threadCount);
+		final BlockingQueue<String> queue_src = new LinkedBlockingQueue<String>(queueSize);
+		final BlockingQueue<Entry<String, byte[]>> queue_dst = new LinkedBlockingQueue<Entry<String, byte[]>>(queueSize);
 
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES, ROUNDS);
 		final byte[][] salts = new byte[][] {
 			hasher.generateSalt(), hasher.generateSalt(), hasher.generateSalt()
 		};
 
-		executor.submit(new ReaderTask(queue, args[0]));
+		executor.submit(new ReaderTask(queue_src, args[0]));
+		executor.submit(new WriterTask(queue_dst));
 
 		for (int threadId = 0; threadId < threadCount; ++threadId) {
-			executor.submit(new HasherTask(set, queue, salts));
+			executor.submit(new HasherTask(queue_src, queue_dst, salts));
 		}
 
 		executor.shutdown();
@@ -58,12 +62,12 @@ public class Main {
 			System.out.println("Process interrupted !!!");
 		}
 
-		System.out.println((!collision.get()) ? "All done. Goodbye!" : "Failure !!!");
+		System.out.println((!collision) ? "All done. Goodbye!" : "Failure !!!");
 	}
 
 	private static class ReaderTask implements Runnable {
-		final String inputFile;
-		final BlockingQueue<String> queue;
+		private final String inputFile;
+		private final BlockingQueue<String> queue;
 	
 		public ReaderTask(final BlockingQueue<String> queue, final String inputFile) {
 			this.queue = Objects.requireNonNull(queue);
@@ -93,39 +97,75 @@ public class Main {
 	}
 
 	private static class HasherTask implements Runnable {
-		private final BlockingQueue<String> queue;
+		private static final AtomicInteger pending = new AtomicInteger(0);
+
+		private final BlockingQueue<String> queue_src;
+		private final BlockingQueue<Entry<String, byte[]>> queue_dst;
 		private final byte[][] salts;
-		private final SqlHashSet set;
 		private final PasswordHasher hasher;
 
-		public HasherTask(final SqlHashSet set, final BlockingQueue<String> queue, final byte[][] salts) {
-			this.queue = Objects.requireNonNull(queue);
+		public HasherTask(final BlockingQueue<String> queue_src, final BlockingQueue<Entry<String, byte[]>> queue_dst, final byte[][] salts) {
+			this.queue_src = Objects.requireNonNull(queue_src);
+			this.queue_dst = Objects.requireNonNull(queue_dst);
 			this.salts = Objects.requireNonNull(salts);
-			this.set = Objects.requireNonNull(set);
 			this.hasher = PasswordManager.getInstance(PasswordMode.AES, ROUNDS);
+			pending.incrementAndGet();
 		}
 
 		@Override
 		public void run() {
 			try {
-				try {
+				/* try {
 					final Kernel32 kernel32 = Kernel32.INSTANCE;
 					kernel32.SetThreadPriority(kernel32.GetCurrentThread(), Kernel32.THREAD_PRIORITY_LOWEST);
-				} catch (Exception e) {}
+				} catch (Exception e) {} */
 
 				String line;
-				long size;
-				while (!(line = queue.take()).isEmpty()) {
+				while (!(line = queue_src.take()).isEmpty()) {
 					for (final byte[] salt : salts) {
 						final byte[] hashValue = hasher.compute(line, salt);
-						if ((size = set.add(hashValue)) < 0L) {
-							if (collision.compareAndSet(false, true)) {
-								System.out.println("Collision detected! [key: \"" + line + "\"]");
-								executor.shutdownNow();
-							}
-							throw new InterruptedException("Interrupted!");
-						}
-						System.out.printf("[%,d] %s <-- \"%s\"%n", size, bytesToHex(hashValue), line);
+						queue_dst.put(new SimpleImmutableEntry<String, byte[]>(line, hashValue));
+					}
+				}
+
+				if (pending.decrementAndGet() == 0) {
+					queue_dst.put(new SimpleImmutableEntry<String, byte[]>("", null));
+				}
+			} catch (final InterruptedException e) {
+			} catch (final Exception e) {
+				e.printStackTrace();
+				executor.shutdownNow();
+			}
+		}
+	}
+
+	private static class WriterTask implements Runnable {
+		private final BlockingQueue<Entry<String, byte[]>> queue;
+	
+		public WriterTask(final BlockingQueue<Entry<String, byte[]>> queue) throws IOException {
+			this.queue = Objects.requireNonNull(queue);
+		}
+		
+		@Override
+		public void run() {
+			try (final SqlHashSet set = new SqlHashSet()) {
+				while (!Thread.interrupted()) {
+					final Entry<String, byte[]> currentEntry = queue.take();
+					final String key = currentEntry.getKey();
+					final byte[] hashValue = currentEntry.getValue();
+
+					if (key.isEmpty() || (hashValue == null) || (hashValue.length < 1)) {
+						break;
+					}
+
+					final boolean addedFlag = set.add(hashValue);
+					System.out.printf("q[%,d] %s <-- \"%s\"%n", set.size(), bytesToHex(hashValue), key);
+
+					if (!addedFlag) {
+						System.out.println("Collision detected! [key: \"" + key + "\"]");
+						collision = true;
+						executor.shutdownNow();
+						return;
 					}
 				}
 			} catch (final InterruptedException e) {
