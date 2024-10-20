@@ -134,15 +134,22 @@ public class PasswordHasher_AES implements PasswordHasher {
 		}
 	}
 
-	private static byte[] longToBytes(long value) {
-		final ByteBuffer buffer = ByteBuffer.allocate(BLOCK_SIZE);
-		buffer.putLong(Long.BYTES, value);
-		return buffer.array();
-	}
-
 	private static void concat(final byte[] dst, final byte[] src0, final byte[] src1) {
 		System.arraycopy(src0, 0, dst,          0, BLOCK_SIZE);
 		System.arraycopy(src1, 0, dst, BLOCK_SIZE, BLOCK_SIZE);
+	}
+
+	private static byte[] longToBytes(final long val) {
+		final ByteBuffer buffer = ByteBuffer.allocate(BLOCK_SIZE);
+		buffer.putLong(Long.BYTES, val);
+		buffer.putLong(Long.BYTES, mix64(val));
+		return buffer.array();
+	}
+
+	private static long mix64(long val) {
+		val = (val ^ (val >>> 30)) * 0xBF58476D1CE4E5B9L;
+		val = (val ^ (val >>> 27)) * 0x94D049BB133111EBL;
+		return val ^ (val >>> 31);
 	}
 
 	@SuppressWarnings("serial")

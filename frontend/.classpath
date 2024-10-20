@@ -7,6 +7,6 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.46.1.3.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/PasswordHasher"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/PasswordHasherLib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

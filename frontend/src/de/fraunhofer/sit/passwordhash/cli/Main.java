@@ -27,8 +27,7 @@ import de.fraunhofer.sit.passwordhash.cli.utils.SqlHashSet;
 
 public class Main {
 
-	private static final long ROUNDS = 9999L;
-
+	private static final long hashRounds = parseLong(System.getProperty("passwdhash.rounds"), -1L);
 	private static final int threadCount = Runtime.getRuntime().availableProcessors();
 	private static final ExecutorService executor = Executors.newFixedThreadPool(addSaturating(threadCount, 2));
 
@@ -44,7 +43,7 @@ public class Main {
 		final BlockingQueue<String> queue_src = new LinkedBlockingQueue<String>(queueSize);
 		final BlockingQueue<Entry<String, byte[]>> queue_dst = new LinkedBlockingQueue<Entry<String, byte[]>>(queueSize);
 
-		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES, ROUNDS);
+		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES, hashRounds);
 		final byte[][] salts = new byte[][] {
 			hasher.generateSalt(), hasher.generateSalt(), hasher.generateSalt()
 		};
@@ -110,18 +109,13 @@ public class Main {
 			this.queue_src = Objects.requireNonNull(queue_src);
 			this.queue_dst = Objects.requireNonNull(queue_dst);
 			this.salts = Objects.requireNonNull(salts);
-			this.hasher = PasswordManager.getInstance(PasswordMode.AES, ROUNDS);
+			this.hasher = PasswordManager.getInstance(PasswordMode.AES, hashRounds);
 			pending.incrementAndGet();
 		}
 
 		@Override
 		public void run() {
 			try {
-				/* try {
-					final Kernel32 kernel32 = Kernel32.INSTANCE;
-					kernel32.SetThreadPriority(kernel32.GetCurrentThread(), Kernel32.THREAD_PRIORITY_LOWEST);
-				} catch (Exception e) {} */
-
 				String line;
 				while (!(line = queue_src.take()).isEmpty()) {
 					for (final byte[] salt : salts) {
@@ -176,5 +170,24 @@ public class Main {
 				executor.shutdownNow();
 			}
 		}
+	}
+
+	private static long parseLong(final String property, final long defaultValue) {
+		if (property != null) {
+			final String propertyTrimmed = property.trim();
+			if (!propertyTrimmed.isEmpty()) {
+				try {
+					final long value = Long.parseLong(propertyTrimmed);
+					if (value < 0L) {
+						throw new NumberFormatException("Negative numbers are not allowed!");
+					}
+					return value;
+				} catch (final NumberFormatException e) {
+					throw new IllegalArgumentException("Invalid number: \"" + propertyTrimmed + '"', e);
+				}
+			}
+		}
+
+		return defaultValue;
 	}
 }

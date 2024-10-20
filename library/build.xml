@@ -1,7 +1,14 @@
-<project name="password-hash-lib" default="default">
+<project name="passwdhash-lib" default="default">
 	<property name="dir.src" location="src"/>
 	<property name="dir.bin" location="bin"/>
 	<property name="dir.out" location="dist"/>
+
+	<loadresource property="jdk.version">
+		<propertyresource name="ant.java.version"/>
+		<filterchain>
+			<replaceregex pattern="^1\.(\d)$" replace="\1"/>
+		</filterchain>
+	</loadresource>
 
 	<target name="default" depends="clean,jar">
 		<echo message="Build completed."/>
@@ -19,6 +26,6 @@
 	</target>
 
 	<target name="jar" depends="compile">
-		<jar destfile="${dir.out}/${ant.project.name}.jar" basedir="${dir.bin}"/>
+		<jar destfile="${dir.out}/${ant.project.name}.jdk-${jdk.version}.jar" basedir="${dir.bin}"/>
 	</target>
 </project>
