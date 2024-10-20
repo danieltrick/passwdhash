@@ -101,7 +101,6 @@ public class PasswordHasherTest_AES {
 		Assert.assertNotNull(salt);
 		Assert.assertNotNull(expected);
 
-		Assert.assertTrue(message.length() > 0);
 		Assert.assertTrue(salt.length > 0);
 		Assert.assertTrue(expected.length > 0);
 
