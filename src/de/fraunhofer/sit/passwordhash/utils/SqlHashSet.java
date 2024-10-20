@@ -24,7 +24,7 @@ public class SqlHashSet implements CloseableSet<byte[]> {
 	private final PreparedStatement statementClear;
 
 	private long size = 0L;
-	private volatile boolean closed = false;
+	private volatile boolean isClosed = false;
 
 	static {
 		try {
@@ -98,23 +98,9 @@ public class SqlHashSet implements CloseableSet<byte[]> {
 	}
 
 	@Override
-	public long count() {
-		checkState();
-
-		try (final ResultSet result = statementCount.executeQuery()) {
-			if (result.next()) {
-				return result.getLong(1);
-			} else {
-				throw new SQLException("No result available!");
-			}
-		} catch (final SQLException e) {
-			throw new UncheckedIOException(new IOException ("Faild to count rows in DB table!", e));
-		}
-	}
-
-	@Override
 	public void clear() {
 		checkState();
+		verifySize();
 
 		if (size > 0) {
 			try {
@@ -123,13 +109,15 @@ public class SqlHashSet implements CloseableSet<byte[]> {
 			} catch (final SQLException e) {
 				throw new UncheckedIOException(new IOException ("Failed to clear DB table!", e));
 			}
+			verifySize();
 		}
 	}
 
 	@Override
 	public void close() {
-		if (!closed) {
-			closed = true;
+		if (!isClosed) {
+			isClosed = true;
+			verifySize();
 			safeClose(statementInsrt);
 			safeClose(statementCount);
 			safeClose(statementClear);
@@ -189,8 +177,26 @@ public class SqlHashSet implements CloseableSet<byte[]> {
 	}
 	
 	private void checkState() {
-		if (closed) {
+		if (isClosed) {
 			throw new IllegalStateException("Connection already closed!");
+		}
+	}
+
+	private void verifySize() {
+		if (size != rowCount()) {
+			throw new AssertionError("Size does not match actual count!");
+		}
+	}
+
+	private long rowCount() {
+		try (final ResultSet result = statementCount.executeQuery()) {
+			if (result.next()) {
+				return result.getLong(1);
+			} else {
+				throw new SQLException("No result available!");
+			}
+		} catch (final SQLException e) {
+			throw new UncheckedIOException(new IOException ("Faild to count rows in DB table!", e));
 		}
 	}
 

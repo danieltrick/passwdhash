@@ -91,7 +91,7 @@ public class Main {
 					queue.put("");
 				}
 			} catch (final InterruptedException e) {
-			} catch (final Exception e) {
+			} catch (final Throwable e) {
 				e.printStackTrace();
 				executor.shutdownNow();
 			}
@@ -134,7 +134,7 @@ public class Main {
 					queue_dst.put(new SimpleImmutableEntry<String, byte[]>("", null));
 				}
 			} catch (final InterruptedException e) {
-			} catch (final Exception e) {
+			} catch (final Throwable e) {
 				e.printStackTrace();
 				executor.shutdownNow();
 			}
@@ -147,7 +147,7 @@ public class Main {
 		public WriterTask(final BlockingQueue<Entry<String, byte[]>> queue) throws IOException {
 			this.queue = Objects.requireNonNull(queue);
 		}
-		
+
 		@Override
 		public void run() {
 			try (final CloseableSet<byte[]> set = new SqlHashSet()) {
@@ -170,11 +170,8 @@ public class Main {
 						return;
 					}
 				}
-				if (set.longSize() != set.count()) {
-					throw new AssertionError("Set count does not match its size!");
-				}
 			} catch (final InterruptedException e) {
-			} catch (final Exception e) {
+			} catch (final Throwable e) {
 				e.printStackTrace();
 				executor.shutdownNow();
 			}
