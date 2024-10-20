@@ -1,0 +1,43 @@
+<project name="password-hash-cli" default="default">
+	<property name="dir.src" location="src"/>
+	<property name="dir.bin" location="bin"/>
+	<property name="dir.lib" location="lib"/>
+	<property name="dir.dep" location="../library/dist"/>
+	<property name="dir.out" location="dist"/>
+
+	<target name="default" depends="clean,jar">
+		<echo message="Build completed."/>
+	</target>
+
+	<target name="clean">
+		<delete includeemptydirs="true" verbose="true">
+			<fileset dir="${dir.bin}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+		</delete>
+	</target>
+
+	<target name="compile">
+		<javac srcdir="${dir.src}" destdir="${dir.bin}" includeantruntime="false">
+			<classpath>
+				<path>
+					<fileset dir="${dir.lib}" includes="*.jar"/>
+					<fileset dir="${dir.dep}" includes="*.jar"/>
+				</path>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar destfile="${dir.out}/${ant.project.name}.jar" basedir="${dir.bin}">
+			<zipfileset src="${dir.lib}/jar-in-jar-loader.zip"/>
+			<fileset dir="${dir.lib}" includes="*.jar" id="jars.lib"/>
+			<fileset dir="${dir.dep}" includes="*.jar" id="jars.dep"/>
+			<manifest>
+				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+				<attribute name="Class-Path" value="."/>
+				<attribute name="Rsrc-Main-Class" value="de.fraunhofer.sit.passwordhash.cli.Main"/>
+				<attribute name="Rsrc-Class-Path" value="./ ${toString:jars.dep} ${toString:jars.lib}"/>
+			</manifest>
+		</jar>
+	</target>
+</project>

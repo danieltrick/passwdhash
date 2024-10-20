@@ -47,10 +47,10 @@ public class PasswordHasherTest_AES {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
 		for (int iteration = 0; iteration < 3; ++iteration) {
-			testHash(hasher, MESSAGE_EMPTY, SALT_0, EXPECTED_EMPTY_0);
-			testHash(hasher, MESSAGE_EMPTY, SALT_1, EXPECTED_EMPTY_1);
-			testHash(hasher, MESSAGE_EMPTY, SALT_2, EXPECTED_EMPTY_2);
-			testHash(hasher, MESSAGE_EMPTY, SALT_3, EXPECTED_EMPTY_3);
+			doTestHash(hasher, MESSAGE_EMPTY, SALT_0, EXPECTED_EMPTY_0);
+			doTestHash(hasher, MESSAGE_EMPTY, SALT_1, EXPECTED_EMPTY_1);
+			doTestHash(hasher, MESSAGE_EMPTY, SALT_2, EXPECTED_EMPTY_2);
+			doTestHash(hasher, MESSAGE_EMPTY, SALT_3, EXPECTED_EMPTY_3);
 		}
 	}
 
@@ -59,10 +59,10 @@ public class PasswordHasherTest_AES {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
 		for (int iteration = 0; iteration < 3; ++iteration) {
-			testHash(hasher, MESSAGE_ST024, SALT_0, EXPECTED_ST024_0);
-			testHash(hasher, MESSAGE_ST024, SALT_1, EXPECTED_ST024_1);
-			testHash(hasher, MESSAGE_ST024, SALT_2, EXPECTED_ST024_2);
-			testHash(hasher, MESSAGE_ST024, SALT_3, EXPECTED_ST024_3);
+			doTestHash(hasher, MESSAGE_ST024, SALT_0, EXPECTED_ST024_0);
+			doTestHash(hasher, MESSAGE_ST024, SALT_1, EXPECTED_ST024_1);
+			doTestHash(hasher, MESSAGE_ST024, SALT_2, EXPECTED_ST024_2);
+			doTestHash(hasher, MESSAGE_ST024, SALT_3, EXPECTED_ST024_3);
 		}
 	}
 
@@ -71,10 +71,10 @@ public class PasswordHasherTest_AES {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
 		for (int iteration = 0; iteration < 3; ++iteration) {
-			testHash(hasher, MESSAGE_ST448, SALT_0, EXPECTED_ST448_0);
-			testHash(hasher, MESSAGE_ST448, SALT_1, EXPECTED_ST448_1);
-			testHash(hasher, MESSAGE_ST448, SALT_2, EXPECTED_ST448_2);
-			testHash(hasher, MESSAGE_ST448, SALT_3, EXPECTED_ST448_3);
+			doTestHash(hasher, MESSAGE_ST448, SALT_0, EXPECTED_ST448_0);
+			doTestHash(hasher, MESSAGE_ST448, SALT_1, EXPECTED_ST448_1);
+			doTestHash(hasher, MESSAGE_ST448, SALT_2, EXPECTED_ST448_2);
+			doTestHash(hasher, MESSAGE_ST448, SALT_3, EXPECTED_ST448_3);
 		}
 	}
 
@@ -83,10 +83,10 @@ public class PasswordHasherTest_AES {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
 		for (int iteration = 0; iteration < 3; ++iteration) {
-			testHash(hasher, MESSAGE_ST896, SALT_0, EXPECTED_ST896_0);
-			testHash(hasher, MESSAGE_ST896, SALT_1, EXPECTED_ST896_1);
-			testHash(hasher, MESSAGE_ST896, SALT_2, EXPECTED_ST896_2);
-			testHash(hasher, MESSAGE_ST896, SALT_3, EXPECTED_ST896_3);
+			doTestHash(hasher, MESSAGE_ST896, SALT_0, EXPECTED_ST896_0);
+			doTestHash(hasher, MESSAGE_ST896, SALT_1, EXPECTED_ST896_1);
+			doTestHash(hasher, MESSAGE_ST896, SALT_2, EXPECTED_ST896_2);
+			doTestHash(hasher, MESSAGE_ST896, SALT_3, EXPECTED_ST896_3);
 		}
 	}
 
@@ -96,7 +96,7 @@ public class PasswordHasherTest_AES {
 		Assert.assertThrows(IllegalArgumentException.class, () -> hasher.compute(MESSAGE_EMPTY, new byte[15]));
 	}
 
-	private static void testHash(final PasswordHasher hasher, final String message, final byte[] salt, final byte[] expected) {
+	private static void doTestHash(final PasswordHasher hasher, final String message, final byte[] salt, final byte[] expected) {
 		Assert.assertNotNull(message);
 		Assert.assertNotNull(salt);
 		Assert.assertNotNull(expected);

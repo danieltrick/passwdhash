@@ -1,0 +1,24 @@
+<project name="password-hash-lib" default="default">
+	<property name="dir.src" location="src"/>
+	<property name="dir.bin" location="bin"/>
+	<property name="dir.out" location="dist"/>
+
+	<target name="default" depends="clean,jar">
+		<echo message="Build completed."/>
+	</target>
+
+	<target name="clean">
+		<delete includeemptydirs="true" verbose="true">
+			<fileset dir="${dir.bin}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+		</delete>
+	</target>
+
+	<target name="compile">
+		<javac srcdir="${dir.src}" destdir="${dir.bin}" includeantruntime="false"/>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar destfile="${dir.out}/${ant.project.name}.jar" basedir="${dir.bin}"/>
+	</target>
+</project>

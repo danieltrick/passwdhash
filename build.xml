@@ -1,0 +1,11 @@
+<project name="password-hash" default="build">
+	<target name="build">
+	 	<ant antfile="library/build.xml"  target="default" useNativeBasedir="true"/>
+	 	<ant antfile="frontend/build.xml" target="default" useNativeBasedir="true"/>
+	</target>
+
+	<target name="clean">
+	 	<ant antfile="library/build.xml"  target="clean" useNativeBasedir="true"/>
+	 	<ant antfile="frontend/build.xml" target="clean" useNativeBasedir="true"/>
+	</target>
+</project>
