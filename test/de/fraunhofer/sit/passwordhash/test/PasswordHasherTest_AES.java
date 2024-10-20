@@ -20,35 +20,35 @@ public class PasswordHasherTest_AES {
 	private static final String MESSAGE_ST448 = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
 	private static final String MESSAGE_ST896 = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
 
-	private static final byte[] EXPECTED_EMPTY_0 = Utilities.hexToBytes("ECE6BED12D5004FDE39C46274403323502EDA79D83F3EC8274B09E798AC21A3C");
-	private static final byte[] EXPECTED_EMPTY_1 = Utilities.hexToBytes("C11E410BCF9771549A3512F41C40C6C53C1B818CB6CCAF495A56585267DCCF0A");
-	private static final byte[] EXPECTED_EMPTY_2 = Utilities.hexToBytes("83BFF3E56D4B69F684FFDB6768C932041D03AE936AB1E9EE1A9761DCDF92E5BE");
-	private static final byte[] EXPECTED_EMPTY_3 = Utilities.hexToBytes("A1EE7EF99033B31D1463F8F38F1A3E8B9308B8FEDB3342FCB1CCC05256C0409A");
+	private static final byte[] EXPECTED_EMPTY_0 = Utilities.hexToBytes("41C42B45921267761293ACC97310E425DCFDC92849D02127D4563040F89007E6");
+	private static final byte[] EXPECTED_EMPTY_1 = Utilities.hexToBytes("63BB2F872ECF2DA3231A0874218476D6F5AAF7879D8E75423BFDE846F26D0FB8");
+	private static final byte[] EXPECTED_EMPTY_2 = Utilities.hexToBytes("388A30F3770B481300F312867597F493C09D93823C05E32F8044453DE00BD716");
+	private static final byte[] EXPECTED_EMPTY_3 = Utilities.hexToBytes("5FB6EE365152C67693BBDEFB5AF53D778C5F5DC9D89D06A7C1BF81A86A2CE677");
 
-	private static final byte[] EXPECTED_ST024_0 = Utilities.hexToBytes("569DAD363E1BFC9160382EA8A99C8CB3147D873705562E8547F0D3BC8E837FCE");
-	private static final byte[] EXPECTED_ST024_1 = Utilities.hexToBytes("F47F8EFFA65959DE519786BBC2076E686E830184D1DE223D57D68E306086B8E1");
-	private static final byte[] EXPECTED_ST024_2 = Utilities.hexToBytes("DBC8F8577BFBA4BBED7DCDCEB1211B05F644D8E7A62BCFDD1CAF14C2593B5853");
-	private static final byte[] EXPECTED_ST024_3 = Utilities.hexToBytes("38B7EA3A326B7F15156CB9DBA8DD7C596F8918EA3122455AF0E870B45302262F");
+	private static final byte[] EXPECTED_ST024_0 = Utilities.hexToBytes("8D3307174F0F65EAD78FC03E8FAFED37F21662C462670F9A0358A0244C8DAD26");
+	private static final byte[] EXPECTED_ST024_1 = Utilities.hexToBytes("AD32F2FDE8C16754EA733CCF0CC63D9970DDB68074F6EA2C44072135E8523310");
+	private static final byte[] EXPECTED_ST024_2 = Utilities.hexToBytes("CCBCB114C43DEE9E6699BE280011A7E206B072ABD2A999D6C5AF0B3290660556");
+	private static final byte[] EXPECTED_ST024_3 = Utilities.hexToBytes("2FFF23BAC4D4E88E33A836499FEE72B867A5D1D6B649BB95D21832E52A256B3E");
 
-	private static final byte[] EXPECTED_ST448_0 = Utilities.hexToBytes("4721EC3D801BE5127BB18D23DA5CA76A921703AF79B4D588054461D293F65B06");
-	private static final byte[] EXPECTED_ST448_1 = Utilities.hexToBytes("1253AC6F3DB3E590FFDD077B050D14045C7D76518E5426F25F6031AA44CF8319");
-	private static final byte[] EXPECTED_ST448_2 = Utilities.hexToBytes("EEBB21A48EFCBCDD5137A66CB6A289B2B528A844A1FED5424DAD5A5ECF6EEA1F");
-	private static final byte[] EXPECTED_ST448_3 = Utilities.hexToBytes("9D15A2092E41DB110DA7B633A7F57DEAD5ACAA90A16949A4C8E6200FE1104ECA");
+	private static final byte[] EXPECTED_ST448_0 = Utilities.hexToBytes("8734258A294353384F7339E307E28059EB9B82C2601BCC612C61459FBD56E639");
+	private static final byte[] EXPECTED_ST448_1 = Utilities.hexToBytes("4EDF4BD1E39B08ED756B81676A4B2D71C144F11C2FE1F32318A71B549E188045");
+	private static final byte[] EXPECTED_ST448_2 = Utilities.hexToBytes("7B88A347C18B53FAEBDBF3F9FA8A8970CCF6F0856FE45252AE95D211D84E2278");
+	private static final byte[] EXPECTED_ST448_3 = Utilities.hexToBytes("AAC8489B8E417A7ED1AF4494762B93FD9F799D207A046847006C331871493D68");
 
-	private static final byte[] EXPECTED_ST896_0 = Utilities.hexToBytes("9D1D5F06800E328AF8A25CA1A80A64A4F1155973227F9D6747F5B776EC4449DF");
-	private static final byte[] EXPECTED_ST896_1 = Utilities.hexToBytes("2683BE6455500EDE30C92A5AADF8F868BFAE7F2C75396F8A1752C64DDEF6E2B8");
-	private static final byte[] EXPECTED_ST896_2 = Utilities.hexToBytes("BC3CF68D77AE6F93927E4B846B1E1241035EE9D41135C2BA22DB87E58814F1C1");
-	private static final byte[] EXPECTED_ST896_3 = Utilities.hexToBytes("F9350FBD53021FC13DF0F834B8C674204E1758E6824CFED10BCA86FD5D0483EE");
+	private static final byte[] EXPECTED_ST896_0 = Utilities.hexToBytes("EA82671558534508FCD7F3809F5416B13131F59549EE72D566A6BF53DC290CC7");
+	private static final byte[] EXPECTED_ST896_1 = Utilities.hexToBytes("6B3F5AB5245D3CC2CEE12373C2F4163046A25CF170BD2036349BD6E82287B19C");
+	private static final byte[] EXPECTED_ST896_2 = Utilities.hexToBytes("452226A930EAD214D13983CF84DBAD44216FF60556EE56E5177F69A6E5527F2D");
+	private static final byte[] EXPECTED_ST896_3 = Utilities.hexToBytes("D48EE6ED756CD48198DF39DB76F914B27922D520922B34615FEEC0FC5A7A0CEF");
 
 	@Test
 	void testHashEmpty() {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
 		for (int iteration = 0; iteration < 3; ++iteration) {
-			Assert.assertArrayEquals(EXPECTED_EMPTY_0, hasher.compute(MESSAGE_EMPTY, SALT_0));
-			Assert.assertArrayEquals(EXPECTED_EMPTY_1, hasher.compute(MESSAGE_EMPTY, SALT_1));
-			Assert.assertArrayEquals(EXPECTED_EMPTY_2, hasher.compute(MESSAGE_EMPTY, SALT_2));
-			Assert.assertArrayEquals(EXPECTED_EMPTY_3, hasher.compute(MESSAGE_EMPTY, SALT_3));
+			assertHashValue(EXPECTED_EMPTY_0, hasher.compute(MESSAGE_EMPTY, SALT_0));
+			assertHashValue(EXPECTED_EMPTY_1, hasher.compute(MESSAGE_EMPTY, SALT_1));
+			assertHashValue(EXPECTED_EMPTY_2, hasher.compute(MESSAGE_EMPTY, SALT_2));
+			assertHashValue(EXPECTED_EMPTY_3, hasher.compute(MESSAGE_EMPTY, SALT_3));
 		}
 	}
 
@@ -57,10 +57,10 @@ public class PasswordHasherTest_AES {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
 		for (int iteration = 0; iteration < 3; ++iteration) {
-			Assert.assertArrayEquals(EXPECTED_ST024_0, hasher.compute(MESSAGE_ST024, SALT_0));
-			Assert.assertArrayEquals(EXPECTED_ST024_1, hasher.compute(MESSAGE_ST024, SALT_1));
-			Assert.assertArrayEquals(EXPECTED_ST024_2, hasher.compute(MESSAGE_ST024, SALT_2));
-			Assert.assertArrayEquals(EXPECTED_ST024_3, hasher.compute(MESSAGE_ST024, SALT_3));
+			assertHashValue(EXPECTED_ST024_0, hasher.compute(MESSAGE_ST024, SALT_0));
+			assertHashValue(EXPECTED_ST024_1, hasher.compute(MESSAGE_ST024, SALT_1));
+			assertHashValue(EXPECTED_ST024_2, hasher.compute(MESSAGE_ST024, SALT_2));
+			assertHashValue(EXPECTED_ST024_3, hasher.compute(MESSAGE_ST024, SALT_3));
 		}
 	}
 
@@ -69,10 +69,10 @@ public class PasswordHasherTest_AES {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
 		for (int iteration = 0; iteration < 3; ++iteration) {
-			Assert.assertArrayEquals(EXPECTED_ST448_0, hasher.compute(MESSAGE_ST448, SALT_0));
-			Assert.assertArrayEquals(EXPECTED_ST448_1, hasher.compute(MESSAGE_ST448, SALT_1));
-			Assert.assertArrayEquals(EXPECTED_ST448_2, hasher.compute(MESSAGE_ST448, SALT_2));
-			Assert.assertArrayEquals(EXPECTED_ST448_3, hasher.compute(MESSAGE_ST448, SALT_3));
+			assertHashValue(EXPECTED_ST448_0, hasher.compute(MESSAGE_ST448, SALT_0));
+			assertHashValue(EXPECTED_ST448_1, hasher.compute(MESSAGE_ST448, SALT_1));
+			assertHashValue(EXPECTED_ST448_2, hasher.compute(MESSAGE_ST448, SALT_2));
+			assertHashValue(EXPECTED_ST448_3, hasher.compute(MESSAGE_ST448, SALT_3));
 		}
 	}
 
@@ -81,10 +81,10 @@ public class PasswordHasherTest_AES {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
 		for (int iteration = 0; iteration < 3; ++iteration) {
-			Assert.assertArrayEquals(EXPECTED_ST896_0, hasher.compute(MESSAGE_ST896, SALT_0));
-			Assert.assertArrayEquals(EXPECTED_ST896_1, hasher.compute(MESSAGE_ST896, SALT_1));
-			Assert.assertArrayEquals(EXPECTED_ST896_2, hasher.compute(MESSAGE_ST896, SALT_2));
-			Assert.assertArrayEquals(EXPECTED_ST896_3, hasher.compute(MESSAGE_ST896, SALT_3));
+			assertHashValue(EXPECTED_ST896_0, hasher.compute(MESSAGE_ST896, SALT_0));
+			assertHashValue(EXPECTED_ST896_1, hasher.compute(MESSAGE_ST896, SALT_1));
+			assertHashValue(EXPECTED_ST896_2, hasher.compute(MESSAGE_ST896, SALT_2));
+			assertHashValue(EXPECTED_ST896_3, hasher.compute(MESSAGE_ST896, SALT_3));
 		}
 	}
 
@@ -92,5 +92,10 @@ public class PasswordHasherTest_AES {
 	public void testInvalidArgs() {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 		Assert.assertThrows(IllegalArgumentException.class, () -> hasher.compute(MESSAGE_EMPTY, new byte[15]));
+	}
+
+	private static void assertHashValue(final byte[] expected, final byte[] computed) {
+		System.out.println(Utilities.bytesToHex(computed));
+		Assert.assertArrayEquals(expected, computed);
 	}
 }
