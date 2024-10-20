@@ -1,8 +1,8 @@
-package de.fraunhofer.sit.passwordhash;
+package de.fraunhofer.sit.passwordhash.cli;
 
-import static de.fraunhofer.sit.passwordhash.utils.Utilities.addSaturating;
-import static de.fraunhofer.sit.passwordhash.utils.Utilities.bytesToHex;
-import static de.fraunhofer.sit.passwordhash.utils.Utilities.multiplySaturating;
+import static de.fraunhofer.sit.passwordhash.utils.HexString.bytesToHex;
+import static de.fraunhofer.sit.passwordhash.utils.MathUtils.addSaturating;
+import static de.fraunhofer.sit.passwordhash.utils.MathUtils.multiplySaturating;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -19,11 +19,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import de.fraunhofer.sit.passwordhash.hasher.PasswordHasher;
-import de.fraunhofer.sit.passwordhash.hasher.PasswordManager;
-import de.fraunhofer.sit.passwordhash.hasher.PasswordMode;
-import de.fraunhofer.sit.passwordhash.utils.CloseableSet;
-import de.fraunhofer.sit.passwordhash.utils.SqlHashSet;
+import de.fraunhofer.sit.passwordhash.PasswordHasher;
+import de.fraunhofer.sit.passwordhash.PasswordManager;
+import de.fraunhofer.sit.passwordhash.PasswordMode;
+import de.fraunhofer.sit.passwordhash.cli.utils.CloseableSet;
+import de.fraunhofer.sit.passwordhash.cli.utils.SqlHashSet;
 
 public class Main {
 

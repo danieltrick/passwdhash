@@ -1,4 +1,4 @@
-package de.fraunhofer.sit.passwordhash.hasher.impl;
+package de.fraunhofer.sit.passwordhash.impl;
 
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;

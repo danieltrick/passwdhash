@@ -1,4 +1,4 @@
-package de.fraunhofer.sit.passwordhash.hasher.impl;
+package de.fraunhofer.sit.passwordhash.impl;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -8,7 +8,7 @@ import java.util.Arrays;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
-import de.fraunhofer.sit.passwordhash.hasher.PasswordHasher;
+import de.fraunhofer.sit.passwordhash.PasswordHasher;
 
 public class PasswordHasher_AES implements PasswordHasher {
 

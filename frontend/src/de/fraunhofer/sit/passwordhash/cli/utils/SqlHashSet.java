@@ -1,6 +1,6 @@
-package de.fraunhofer.sit.passwordhash.utils;
+package de.fraunhofer.sit.passwordhash.cli.utils;
 
-import static de.fraunhofer.sit.passwordhash.utils.Utilities.addSaturating;
+import static de.fraunhofer.sit.passwordhash.utils.MathUtils.addSaturating;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

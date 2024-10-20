@@ -1,13 +1,14 @@
-package de.fraunhofer.sit.passwordhash.hasher;
+package de.fraunhofer.sit.passwordhash;
 
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
+
+import de.fraunhofer.sit.passwordhash.impl.PasswordHasher_AES;
+
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-
-import de.fraunhofer.sit.passwordhash.hasher.impl.PasswordHasher_AES;
 
 public class PasswordManager {
 

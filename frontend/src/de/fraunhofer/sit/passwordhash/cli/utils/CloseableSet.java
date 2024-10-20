@@ -1,4 +1,4 @@
-package de.fraunhofer.sit.passwordhash.utils;
+package de.fraunhofer.sit.passwordhash.cli.utils;
 
 import java.util.Set;
 

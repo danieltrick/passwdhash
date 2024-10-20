@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.fraunhofer.sit.passwordhash.hasher.impl.PaddingHelper;
+import de.fraunhofer.sit.passwordhash.impl.PaddingHelper;
 
 public class PaddingHelperTest {
 

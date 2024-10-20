@@ -7,7 +7,7 @@ import java.util.TreeSet;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.fraunhofer.sit.passwordhash.hasher.impl.SaltGenerator;
+import de.fraunhofer.sit.passwordhash.impl.SaltGenerator;
 
 public class SaltGeneratorTest {
 

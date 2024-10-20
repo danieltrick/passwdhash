@@ -1,4 +1,4 @@
-package de.fraunhofer.sit.passwordhash.hasher;
+package de.fraunhofer.sit.passwordhash;
 
 public enum PasswordMode {
 	AES(1L);

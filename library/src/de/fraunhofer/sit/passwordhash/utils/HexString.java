@@ -3,9 +3,9 @@ package de.fraunhofer.sit.passwordhash.utils;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class Utilities {
+public class HexString {
 
-	private Utilities() {
+	private HexString() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -49,29 +49,5 @@ public class Utilities {
 		}
 
 		return bytes;
-	}
-
-	public static int addSaturating(final int a, final int b) {
-		try {
-			return Math.addExact(a, b);
-		} catch (final ArithmeticException e) {
-			return Integer.MAX_VALUE;
-		}
-	}
-
-	public static long addSaturating(final long a, final long b) {
-		try {
-			return Math.addExact(a, b);
-		} catch (final ArithmeticException e) {
-			return Long.MAX_VALUE;
-		}
-	}
-
-	public static int multiplySaturating(final int a, final int b) {
-		try {
-			return Math.multiplyExact(a, b);
-		} catch (final ArithmeticException e) {
-			return Integer.MAX_VALUE;
-		}
 	}
 }
