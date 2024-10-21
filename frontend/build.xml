@@ -29,7 +29,7 @@
 		<ivy:cleancache/>
 	</target>
 
-	<target name="check">
+	<target name="check-library">
 		<fail message="Error: Must build the 'passwdhash' library first!">
 			<condition>
 				<equals arg1="${toString:fileset.jars.dep}" arg2="" trim="true"/>
@@ -37,15 +37,15 @@
 		</fail>
 	</target>
 
-	<target name="ivy">
+	<target name="ivy-retrieve">
 		<delete includeemptydirs="true" verbose="true">
 			<fileset dir="${dir.lib}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
-		<ivy:resolve conf="default" refresh="true" file="${basedir}/ivy.xml"/>
-		<ivy:retrieve pattern="${dir.lib}/[artifact]-[revision].[ext]" conf="default" file="${basedir}/ivy.xml"/>
+		<ivy:resolve refresh="true" file="${basedir}/ivy.xml"/>
+		<ivy:retrieve pattern="${dir.lib}/[artifact]-[revision].[ext]" file="${basedir}/ivy.xml"/>
 	</target>
 
-	<target name="compile" depends="check,ivy">
+	<target name="compile" depends="check-library,ivy-retrieve">
 		<delete includeemptydirs="true" verbose="true">
 			<fileset dir="${dir.bin}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
