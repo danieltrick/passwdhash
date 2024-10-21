@@ -26,9 +26,27 @@ jobs:
       - run: ant
       - uses: actions/upload-artifact@v4
         with:
-          name: passwdhash-lib.jdk-${{ matrix.jdk }}
+          name: dist.passwdhash-lib.jdk-${{ matrix.jdk }}
           path: library/dist
       - uses: actions/upload-artifact@v4
         with:
-          name: passwdhash-cli.jdk-${{ matrix.jdk }}
+          name: dist.passwdhash-cli.jdk-${{ matrix.jdk }}
           path: frontend/dist
+
+  release:
+    if: ${{ github.event_name == 'release' }}
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: dist.*
+          path: artifacts
+          merge-multiple: true
+      - uses: Roang-zero1/github-upload-release-artifacts-action@v2
+        with:
+          args: artifacts/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
