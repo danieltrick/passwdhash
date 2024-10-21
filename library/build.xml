@@ -1,4 +1,4 @@
-<project name="passwdhash-lib" default="default">
+<project name="passwdhash-lib" default="rebuild">
 	<property name="dir.src" location="src"/>
 	<property name="dir.bin" location="bin"/>
 	<property name="dir.out" location="dist"/>
@@ -10,8 +10,8 @@
 		</filterchain>
 	</loadresource>
 
-	<target name="default" depends="clean,jar">
-		<echo message="Build completed."/>
+	<target name="rebuild" depends="clean,jar">
+		<echo message="Rebuild completed."/>
 	</target>
 
 	<target name="clean">
@@ -22,10 +22,16 @@
 	</target>
 
 	<target name="compile">
+		<delete includeemptydirs="true" verbose="true">
+			<fileset dir="${dir.bin}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+		</delete>
 		<javac srcdir="${dir.src}" destdir="${dir.bin}" includeantruntime="false"/>
 	</target>
 
 	<target name="jar" depends="compile">
+		<delete includeemptydirs="true" verbose="true">
+			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+		</delete>
 		<jar destfile="${dir.out}/${ant.project.name}.jdk-${jdk.version}.jar" basedir="${dir.bin}"/>
 	</target>
 </project>

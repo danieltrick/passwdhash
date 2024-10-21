@@ -1,4 +1,4 @@
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="passwdhash-cli" default="default">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="passwdhash-cli" default="rebuild">
 	<property name="dir.src" location="src"/>
 	<property name="dir.bin" location="bin"/>
 	<property name="dir.lib" location="lib"/>
@@ -14,10 +14,10 @@
 	</loadresource>
 
 	<fileset dir="${dir.lib}" includes="*.jar" id="fileset.jars.lib"/>
-	<fileset dir="${dir.dep}" includes="*.jdk-${jdk.version}.jar" id="fileset.jars.dep"/>
+	<fileset dir="${dir.dep}" includes="passwdhash*.jdk-${jdk.version}.jar" id="fileset.jars.dep"/>
 
-	<target name="default" depends="clean,jar">
-		<echo message="Build completed."/>
+	<target name="rebuild" depends="clean,jar">
+		<echo message="Rebuild completed."/>
 	</target>
 
 	<target name="clean">
@@ -26,13 +26,29 @@
 			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 			<fileset dir="${dir.lib}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
+		<ivy:cleancache/>
 	</target>
 
-	<target name="retrieve">
-		<ivy:retrieve pattern="${dir.lib}/[artifact]-[revision].[ext]" conf="default" sync="true"/>
+	<target name="check">
+		<fail message="Error: Must build the 'passwdhash' library first!">
+			<condition>
+				<equals arg1="${toString:fileset.jars.dep}" arg2="" trim="true"/>
+			</condition>
+		</fail>
 	</target>
 
-	<target name="compile" depends="retrieve">
+	<target name="ivy">
+		<delete includeemptydirs="true" verbose="true">
+			<fileset dir="${dir.lib}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+		</delete>
+		<ivy:resolve conf="default" refresh="true" file="${basedir}/ivy.xml"/>
+		<ivy:retrieve pattern="${dir.lib}/[artifact]-[revision].[ext]" conf="default" file="${basedir}/ivy.xml"/>
+	</target>
+
+	<target name="compile" depends="check,ivy">
+		<delete includeemptydirs="true" verbose="true">
+			<fileset dir="${dir.bin}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+		</delete>
 		<javac srcdir="${dir.src}" destdir="${dir.bin}" includeantruntime="false">
 			<classpath>
 				<path>
@@ -44,6 +60,9 @@
 	</target>
 
 	<target name="jar" depends="compile">
+		<delete includeemptydirs="true" verbose="true">
+			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+		</delete>
 		<jar destfile="${dir.out}/${ant.project.name}.jdk-${jdk.version}.jar" basedir="${dir.bin}">
 			<zipfileset src="${dir.etc}/jar-in-jar-loader.zip"/>
 			<fileset refid="fileset.jars.lib"/>

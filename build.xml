@@ -1,11 +1,20 @@
-<project name="password-hash" default="build">
-	<target name="build">
-	 	<ant antfile="library/build.xml"  target="default" useNativeBasedir="true"/>
-	 	<ant antfile="frontend/build.xml" target="default" useNativeBasedir="true"/>
+<project name="passwdhash" default="rebuild">
+	<condition property="target.name" value="${ant.project.invoked-targets}" else="rebuild">
+		<and>
+			<isset property="ant.project.invoked-targets"/>
+			<not>
+				<equals arg1="${ant.project.invoked-targets}" arg2="" trim="true"/>
+			</not>
+		</and>
+	</condition>
+
+	<target name="_all">
+		<ant target="${target.name}" useNativeBasedir="true" antfile="library/build.xml"/>
+		<ant target="${target.name}" useNativeBasedir="true" antfile="frontend/build.xml"/>
 	</target>
 
-	<target name="clean">
-	 	<ant antfile="library/build.xml"  target="clean" useNativeBasedir="true"/>
-	 	<ant antfile="frontend/build.xml" target="clean" useNativeBasedir="true"/>
-	</target>
+	<target depends="_all" name="rebuild"/>
+	<target depends="_all" name="compile"/>
+	<target depends="_all" name="jar"/>
+	<target depends="_all" name="clean"/>
 </project>
