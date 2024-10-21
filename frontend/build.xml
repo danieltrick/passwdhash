@@ -1,7 +1,8 @@
-<project name="passwdhash-cli" default="default">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="passwdhash-cli" default="default">
 	<property name="dir.src" location="src"/>
 	<property name="dir.bin" location="bin"/>
 	<property name="dir.lib" location="lib"/>
+	<property name="dir.etc" location="etc"/>
 	<property name="dir.dep" location="../library/dist"/>
 	<property name="dir.out" location="dist"/>
 
@@ -23,10 +24,15 @@
 		<delete includeemptydirs="true" verbose="true">
 			<fileset dir="${dir.bin}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+			<fileset dir="${dir.lib}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
 	</target>
 
-	<target name="compile">
+	<target name="retrieve">
+		<ivy:retrieve pattern="${dir.lib}/[artifact]-[revision].[ext]" conf="default" sync="true"/>
+	</target>
+
+	<target name="compile" depends="retrieve">
 		<javac srcdir="${dir.src}" destdir="${dir.bin}" includeantruntime="false">
 			<classpath>
 				<path>
@@ -39,7 +45,7 @@
 
 	<target name="jar" depends="compile">
 		<jar destfile="${dir.out}/${ant.project.name}.jdk-${jdk.version}.jar" basedir="${dir.bin}">
-			<zipfileset src="${dir.lib}/jar-in-jar-loader.zip"/>
+			<zipfileset src="${dir.etc}/jar-in-jar-loader.zip"/>
 			<fileset refid="fileset.jars.lib"/>
 			<fileset refid="fileset.jars.dep"/>
 			<manifest>
