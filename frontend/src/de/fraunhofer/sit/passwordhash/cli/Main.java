@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map.Entry;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -27,6 +28,7 @@ import de.fraunhofer.sit.passwordhash.cli.utils.SqlHashSet;
 
 public class Main {
 
+	private static final PasswordMode mode = parseMode(System.getProperty("passwdhash.mode"), PasswordMode.AES);
 	private static final long hashRounds = parseLong(System.getProperty("passwdhash.rounds"), -1L);
 	private static final int threadCount = Runtime.getRuntime().availableProcessors();
 	private static final ExecutorService executor = Executors.newFixedThreadPool(addSaturating(threadCount, 2));
@@ -43,7 +45,7 @@ public class Main {
 		final BlockingQueue<String> queue_src = new LinkedBlockingQueue<String>(queueSize);
 		final BlockingQueue<Entry<String, byte[]>> queue_dst = new LinkedBlockingQueue<Entry<String, byte[]>>(queueSize);
 
-		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES, hashRounds);
+		final PasswordHasher hasher = PasswordManager.getInstance(mode, hashRounds);
 		final byte[][] salts = new byte[][] {
 			hasher.generateSalt(), hasher.generateSalt(), hasher.generateSalt()
 		};
@@ -109,7 +111,7 @@ public class Main {
 			this.queue_src = Objects.requireNonNull(queue_src);
 			this.queue_dst = Objects.requireNonNull(queue_dst);
 			this.salts = Objects.requireNonNull(salts);
-			this.hasher = PasswordManager.getInstance(PasswordMode.AES, hashRounds);
+			this.hasher = PasswordManager.getInstance(mode, hashRounds);
 			pending.incrementAndGet();
 		}
 
@@ -188,6 +190,23 @@ public class Main {
 			}
 		}
 
+		return defaultValue;
+	}
+
+	private static PasswordMode parseMode(final String property, final PasswordMode defaultValue) {
+		if (property != null) {
+			final String propertyTrimmed = property.trim();
+			if (!propertyTrimmed.isEmpty()) {
+				switch (propertyTrimmed.toLowerCase(Locale.US)) {
+				case "aes":
+					return PasswordMode.AES;
+				case "chacha20":
+					return PasswordMode.ChaCha20;
+				default:
+					throw new IllegalArgumentException("Invalid mode: \"" + propertyTrimmed + '"');
+				}
+			}
+		}
 		return defaultValue;
 	}
 }
