@@ -5,7 +5,6 @@ import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -50,7 +49,7 @@ public class SaltGenerator {
 	}
 
 	public static byte[] generateSalt(final int size) {
-		if (size < 1) {
+		if (size < Long.BYTES) {
 			throw new IllegalArgumentException("Salt size is too small!");
 		}
 
@@ -59,7 +58,7 @@ public class SaltGenerator {
 
 		buffer.putLong(nextTimestamp());
 
-		while (buffer.remaining() >= Integer.BYTES) {
+		while (buffer.hasRemaining()) {
 			buffer.putInt(RandomHolder.INSTANCE.nextInt());
 		}
 
