@@ -1,7 +1,8 @@
 package de.fraunhofer.sit.passwordhash;
 
 public enum PasswordMode {
-	AES(1L);
+	AES(1L),
+	ChaCha20(2L);
 
 	public final long id;
 

@@ -7,40 +7,36 @@ import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.ChaCha20ParameterSpec;
 
 import de.fraunhofer.sit.passwordhash.PasswordHasher;
 
-public class PasswordHasher_AES implements PasswordHasher {
+public class PasswordHasher_ChaCha20 implements PasswordHasher {
 
-	private static final String ALGORITHM_NAME_CIPHER = "AES/ECB/NoPadding";
+	private static final String ALGORITHM_NAME_CIPHER = "ChaCha20/None/NoPadding";
 
-	private static final int BLOCK_SIZE = 16, KEY_SIZE = 2 * BLOCK_SIZE, DEFAULT_ROUNDS = 499979;
+	private static final int BLOCK_SIZE = 32, SALT_SIZE = 12, DEFAULT_ROUNDS = 2499997;
 
-	private static final byte[] INITIALIZER_0 = {
+	private static final byte[] INITIALIZER = {
 		(byte) 0xB7, (byte) 0xE1, (byte) 0x51, (byte) 0x62, (byte) 0x8A, (byte) 0xED, (byte) 0x2A, (byte) 0x6A,
-		(byte) 0xBF, (byte) 0x71, (byte) 0x58, (byte) 0x80, (byte) 0x9C, (byte) 0xF4, (byte) 0xF3, (byte) 0xC7
-	};
-
-	private static final byte[] INITIALIZER_1 = {
+		(byte) 0xBF, (byte) 0x71, (byte) 0x58, (byte) 0x80, (byte) 0x9C, (byte) 0xF4, (byte) 0xF3, (byte) 0xC7,
 		(byte) 0x62, (byte) 0xE7, (byte) 0x16, (byte) 0x0F, (byte) 0x38, (byte) 0xB4, (byte) 0xDA, (byte) 0x56,
 		(byte) 0xA7, (byte) 0x84, (byte) 0xD9, (byte) 0x04, (byte) 0x51, (byte) 0x90, (byte) 0xCF, (byte) 0xEF
 	};
 
 	private final long rounds;
 
-	private final byte[] state0 = new byte[BLOCK_SIZE];
-	private final byte[] state1 = new byte[BLOCK_SIZE];
+	private final KeyHolder key = new KeyHolder();
 
-	private final KeyHolder key0 = new KeyHolder();
-	private final KeyHolder key1 = new KeyHolder();
+	private final byte[] buffer = new byte[BLOCK_SIZE];
 
 	private final Cipher cipher;
 
-	public PasswordHasher_AES() {
+	public PasswordHasher_ChaCha20() {
 		this(DEFAULT_ROUNDS);
 	}
 
-	public PasswordHasher_AES(final long rounds) {
+	public PasswordHasher_ChaCha20(final long rounds) {
 		this.rounds = (rounds > 0) ? PrimeFinder.findPrime(Math.max(31L, rounds)) : DEFAULT_ROUNDS;
 
 		try {
@@ -69,80 +65,60 @@ public class PasswordHasher_AES implements PasswordHasher {
 			throw new NullPointerException("salt value must not be null!");
 		}
 
-		if (salt.length != BLOCK_SIZE) {
-			throw new IllegalArgumentException("salt has an invalid size! (must be 16 bytes)");
+		if (salt.length != SALT_SIZE) {
+			throw new IllegalArgumentException("salt has an invalid size! (must be 12 bytes)");
 		}
 
-		System.arraycopy(INITIALIZER_0, 0, state0, 0, BLOCK_SIZE);
-		System.arraycopy(INITIALIZER_1, 0, state1, 0, BLOCK_SIZE);
-
-		final byte[] digest = new byte[KEY_SIZE];
+		System.arraycopy(INITIALIZER, 0, key.bytes, 0, BLOCK_SIZE);
 		final byte[] padded = PaddingHelper.addPadding(BLOCK_SIZE, data);
 
 		try {
-			processBlock(longToBytes(rounds), 0);
-			processBlock(salt, 0);
+			processBlock(longToBytes(rounds), 0, salt);
 			for (long round = 0L; round < rounds; ++round) {
 				invertState();
 				for (int offset = 0; offset < padded.length; offset += BLOCK_SIZE) {
-					processBlock(padded, offset);
+					processBlock(padded, offset, salt);
 				}
 			}
-			concat(digest, state0, state1);
+			return key.bytes.clone();
 		} catch (final GeneralSecurityException e) {
 			throw new RuntimeException("failed to compute hash value for password!", e);
 		} finally {
-			key0.destroy();
-			key1.destroy();
+			key.destroy();
 			Arrays.fill(padded, (byte) 0);
-			Arrays.fill(state0, (byte) 0);
-			Arrays.fill(state1, (byte) 0);
+			Arrays.fill(buffer, (byte) 0);
 		}
-
-		return digest;
 	}
 
 	@Override
 	public byte[] generateSalt() {
-		return SaltGenerator.generateSalt(BLOCK_SIZE);
+		return SaltGenerator.generateSalt(SALT_SIZE);
 	};
 
-	private void processBlock(final byte[] data, final int dataOffset) throws GeneralSecurityException {
-		concat(key0.bytes, state0, state1);
-		concat(key1.bytes, state1, state0);
+	private void processBlock(final byte[] data, final int dataOffset, final byte[] salt) throws GeneralSecurityException {
+		cipher.init(Cipher.ENCRYPT_MODE, key, new ChaCha20ParameterSpec(salt, 1));
+		cipher.doFinal(data, dataOffset, BLOCK_SIZE, buffer, 0);
 
-		key0.bytes[0] &= 0xBF;
-		key1.bytes[0] |= 0x40;
-
-		compressBlock(key0, state0, data, dataOffset);
-		compressBlock(key1, state1, data, dataOffset);
-	}
-
-	private void compressBlock(final KeyHolder key, final byte[] stateOut, final byte[] data, final int dataOffset) throws GeneralSecurityException {
-		cipher.init(Cipher.ENCRYPT_MODE, key);
-		cipher.doFinal(data, dataOffset, BLOCK_SIZE, stateOut, 0);
+		buffer[0] |= 0x40;
 
 		for (int iPos = 0; iPos < BLOCK_SIZE; ++iPos) {
-			stateOut[iPos] ^= data[dataOffset + iPos];
+			key.bytes[iPos] ^= buffer[iPos];
 		}
 	}
 
 	private void invertState() {
 		for (int iPos = 0; iPos < BLOCK_SIZE; ++iPos) {
-			state0[iPos] ^= 0xA5;
-			state1[iPos] ^= 0xA5;
+			key.bytes[iPos] ^= 0xA5;
+			key.bytes[iPos] ^= 0xA5;
 		}
 	}
 
-	private static void concat(final byte[] dst, final byte[] src0, final byte[] src1) {
-		System.arraycopy(src0, 0, dst,          0, BLOCK_SIZE);
-		System.arraycopy(src1, 0, dst, BLOCK_SIZE, BLOCK_SIZE);
-	}
-
-	private static byte[] longToBytes(final long val) {
+	private static byte[] longToBytes(long val) {
 		final ByteBuffer buffer = ByteBuffer.allocate(BLOCK_SIZE);
-		buffer.putLong(Long.BYTES, val);
-		buffer.putLong(Long.BYTES, mix64(val));
+		for (int step = 0; step < 2; ++step, val = ~val) {
+			buffer.putLong(Long.BYTES, val);
+			buffer.putLong(Long.BYTES, mix64(val));
+		}
 		return buffer.array();
 	}
 
@@ -154,11 +130,11 @@ public class PasswordHasher_AES implements PasswordHasher {
 
 	@SuppressWarnings("serial")
 	private final class KeyHolder implements SecretKey {
-		final byte[] bytes = new byte[KEY_SIZE];
+		final byte[] bytes = new byte[BLOCK_SIZE];
 
 		@Override
 		public String getAlgorithm() {
-			return "Rijndael";
+			return "ChaCha20";
 		}
 
 		@Override
@@ -168,9 +144,9 @@ public class PasswordHasher_AES implements PasswordHasher {
 
 		@Override
 		public byte[] getEncoded() {
-			return bytes;
+			return bytes.clone();
 		}
-
+		
 		@Override
 		public void destroy() {
 			Arrays.fill(bytes, (byte) 0);

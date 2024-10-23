@@ -6,6 +6,7 @@ import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 
 import de.fraunhofer.sit.passwordhash.impl.PasswordHasher_AES;
+import de.fraunhofer.sit.passwordhash.impl.PasswordHasher_ChaCha20;
 
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -82,6 +83,8 @@ public class PasswordManager {
 		switch (mode) {
 		case AES:
 			return new PasswordHasher_AES(rounds);
+		case ChaCha20:
+			return new PasswordHasher_ChaCha20(rounds);
 		default:
 			throw new IllegalArgumentException("Unsupported password mode specified!");
 		}
