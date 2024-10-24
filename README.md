@@ -56,6 +56,12 @@ Salt value: E48EFAD261EDC601C81466AEB7C7A181
 Hash value: 8601ED4EACDEA9AEE9B7B98FD2C472C340477A439DE4F1047CB573152A34169E
 ```
 
+## Testing
+
+This library was tested to produce **zero** collisions with the following set of 5+ million passwords:
+
+https://github.com/danieltrick/passwdhash/blob/test-data/passwords.txt
+
 ## License
 
 This work is released under the [**3-Clause BSD License**](https://opensource.org/license/bsd-3-clause) (SPDX short identifier: `BSD-3-Clause`).
