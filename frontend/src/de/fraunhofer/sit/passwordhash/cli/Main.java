@@ -111,7 +111,7 @@ public class Main {
 			this.queue_src = Objects.requireNonNull(queue_src);
 			this.queue_dst = Objects.requireNonNull(queue_dst);
 			this.salts = Objects.requireNonNull(salts);
-			this.hasher = PasswordManager.getInstance(mode, hashRounds);
+			System.out.println(this.hasher = PasswordManager.getInstance(mode, hashRounds));
 			pending.incrementAndGet();
 		}
 

@@ -141,9 +141,9 @@ public class PasswordHasher_AES implements PasswordHasher {
 
 	private static byte[] longToBytes(final long val) {
 		final ByteBuffer buffer = ByteBuffer.allocate(BLOCK_SIZE);
-		buffer.putLong(Long.BYTES, val);
-		buffer.putLong(Long.BYTES, mix64(val));
-		return buffer.array();
+		return buffer
+			.putLong(mix64(val ^ 0x5555555555555555L))
+			.putLong(mix64(val ^ 0xAAAAAAAAAAAAAAAAL)).array();
 	}
 
 	private static long mix64(long val) {

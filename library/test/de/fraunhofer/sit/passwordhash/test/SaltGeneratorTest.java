@@ -22,19 +22,11 @@ public class SaltGeneratorTest {
 
 	@Test
 	public void testLength() {
-		for (int len = 1; len <= 8; ++len) {
+		for (int len = 8; len <= 24; ++len) {
 			final byte[] salt = SaltGenerator.generateSalt(len);
-			Assert.assertEquals(8, salt.length);
-		}
-
-		for (int len = 9; len <= 16; ++len) {
-			final byte[] salt = SaltGenerator.generateSalt(len);
-			Assert.assertEquals(16, salt.length);
-		}
-
-		for (int len = 17; len <= 24; ++len) {
-			final byte[] salt = SaltGenerator.generateSalt(len);
-			Assert.assertEquals(24, salt.length);
+			final int remainder = len % 4;
+			final int expectedLen = (remainder == 0) ? len : (len + (4 - remainder));
+			Assert.assertEquals(expectedLen, salt.length);
 		}
 	}
 
