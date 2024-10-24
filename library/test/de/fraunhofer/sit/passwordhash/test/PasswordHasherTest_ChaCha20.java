@@ -6,10 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.fraunhofer.sit.passwordhash.PasswordHasher;
@@ -61,12 +59,6 @@ public class PasswordHasherTest_ChaCha20 {
 	private static final byte[] EXPECTED_ST896_1 = hexToBytes("C9E64F43C71905282D13CF62016AD9FC2EA4C68D0C7AB3EAC56778EF182B4763");
 	private static final byte[] EXPECTED_ST896_2 = hexToBytes("38E00D37B6A3EBA1978A962109B5121AEC41DC299EA2B5FD4554619200CCB976");
 	private static final byte[] EXPECTED_ST896_3 = hexToBytes("576A4660F06483DDB0565D395DA9685E9016D221495EC8D4BFA8D93962E96AA7");
-
-	@BeforeEach
-	public void beforeEach() {
-		assumeFalse(true);
-		assumeFalse(System.getProperty("java.version", "?").startsWith("1.8"));
-	}
 
 	@Test
 	void testHashEmpty() {
