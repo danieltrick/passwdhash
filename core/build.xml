@@ -4,6 +4,7 @@
 	<property name="dir.lib" location="lib"/>
 	<property name="dir.bin" location="bin"/>
 	<property name="dir.out" location="dist"/>
+	<property name="dir.root" location=".."/>
 
 	<loadresource property="jdk.version">
 		<propertyresource name="ant.java.version"/>
@@ -35,7 +36,9 @@
 		<delete includeemptydirs="true" verbose="true">
 			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
-		<jar destfile="${dir.out}/${ant.project.name}.jdk-${jdk.version}.jar" basedir="${dir.bin}"/>
+		<jar destfile="${dir.out}/${ant.project.name}.jdk-${jdk.version}.jar" basedir="${dir.bin}">
+			<fileset dir="${dir.root}" includes="LICENSE"/>
+		</jar>
 	</target>
 
 	<target name="tests" depends="compile-tests">

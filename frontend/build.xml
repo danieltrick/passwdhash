@@ -4,6 +4,8 @@
 	<property name="dir.lib" location="lib"/>
 	<property name="dir.etc" location="etc"/>
 	<property name="dir.out" location="dist"/>
+	<property name="dir.root" location=".."/>
+	<property name="dir.core" location="../core/dist"/>
 
 	<loadresource property="jdk.version">
 		<propertyresource name="ant.java.version"/>
@@ -12,10 +14,8 @@
 		</filterchain>
 	</loadresource>
 
-	<property name="dir.core.lib" location="../core/dist"/>
-
 	<fileset dir="${dir.lib}" includes="*.jar" id="fileset.jars"/>
-	<fileset dir="${dir.core.lib}" includes="passwdhash*.jdk-${jdk.version}.jar" id="fileset.core"/>
+	<fileset dir="${dir.core}" includes="passwdhash*.jdk-${jdk.version}.jar" id="fileset.core"/>
 
 	<target name="release" depends="clean,tests,jar">
 		<echo message="Release done."/>
@@ -68,6 +68,7 @@
 			<zipfileset src="${dir.etc}/jar-in-jar-loader.zip"/>
 			<fileset refid="fileset.jars"/>
 			<fileset refid="fileset.core"/>
+			<fileset dir="${dir.root}" includes="LICENSE"/>
 			<manifest>
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
 				<attribute name="Class-Path" value="."/>
