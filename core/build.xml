@@ -36,7 +36,7 @@
 		<delete includeemptydirs="true" verbose="true">
 			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
-		<jar destfile="${dir.out}/${ant.project.name}.jdk-${jdk.version}.jar" basedir="${dir.bin}">
+		<jar destfile="${dir.out}/${ant.project.name}-jdk${jdk.version}.jar" basedir="${dir.bin}">
 			<fileset dir="${dir.root}" includes="LICENSE"/>
 		</jar>
 	</target>

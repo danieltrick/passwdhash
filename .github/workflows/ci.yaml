@@ -42,13 +42,12 @@ jobs:
           version: latest
       - run: ant jar
       - run: |
-          mkdir upload
-          mv -v core/dist/*.jar frontend/dist/*.jar upload
-          rename.ul -v "passwdhash" "passwdhash-${{ github.ref_name }}" upload/*.jar
+          mv -v core/././dist/passwdhash-lib-jdk${{ matrix.jdk }}.jar passwdhash-${{ github.ref_name }}-lib-jdk${{ matrix.jdk }}.jar
+          mv -v frontend/dist/passwdhash-cli-jdk${{ matrix.jdk }}.jar passwdhash-${{ github.ref_name }}-cli-jdk${{ matrix.jdk }}.jar
       - uses: actions/upload-artifact@v4
         with:
           name: dist.passwdhash.jdk-${{ matrix.jdk }}
-          path: upload
+          path: passwdhash-*.jar
 
   release:
     if: ${{ github.event_name == 'release' }}
@@ -59,7 +58,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: dist.*
+          pattern: dist.passwdhash.*
           path: artifacts
           merge-multiple: true
       - uses: Roang-zero1/github-upload-release-artifacts-action@v2

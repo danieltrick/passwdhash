@@ -15,7 +15,7 @@
 	</loadresource>
 
 	<fileset dir="${dir.lib}" includes="*.jar" id="fileset.jars"/>
-	<fileset dir="${dir.core}" includes="passwdhash*.jdk-${jdk.version}.jar" id="fileset.core"/>
+	<fileset dir="${dir.core}" includes="passwdhash*-jdk${jdk.version}.jar" id="fileset.core"/>
 
 	<target name="release" depends="clean,tests,jar">
 		<echo message="Release done."/>
@@ -64,7 +64,7 @@
 		<delete includeemptydirs="true" verbose="true">
 			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
-		<jar destfile="${dir.out}/${ant.project.name}.jdk-${jdk.version}.jar" basedir="${dir.bin}">
+		<jar destfile="${dir.out}/${ant.project.name}-jdk${jdk.version}.jar" basedir="${dir.bin}">
 			<zipfileset src="${dir.etc}/jar-in-jar-loader.zip"/>
 			<fileset refid="fileset.jars"/>
 			<fileset refid="fileset.core"/>

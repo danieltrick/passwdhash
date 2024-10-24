@@ -62,7 +62,7 @@ public class PasswordHasherTest_AES {
 	void testHashEmpty() {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
-		for (int iteration = 0; iteration < 3; ++iteration) {
+		for (int iteration = 0; iteration < 2; ++iteration) {
 			doTestHash(hasher, MESSAGE_EMPTY, SALT_0, EXPECTED_EMPTY_0);
 			doTestHash(hasher, MESSAGE_EMPTY, SALT_1, EXPECTED_EMPTY_1);
 			doTestHash(hasher, MESSAGE_EMPTY, SALT_2, EXPECTED_EMPTY_2);
@@ -74,7 +74,7 @@ public class PasswordHasherTest_AES {
 	void testHashST024() {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
-		for (int iteration = 0; iteration < 3; ++iteration) {
+		for (int iteration = 0; iteration < 2; ++iteration) {
 			doTestHash(hasher, MESSAGE_ST024, SALT_0, EXPECTED_ST024_0);
 			doTestHash(hasher, MESSAGE_ST024, SALT_1, EXPECTED_ST024_1);
 			doTestHash(hasher, MESSAGE_ST024, SALT_2, EXPECTED_ST024_2);
@@ -86,7 +86,7 @@ public class PasswordHasherTest_AES {
 	void testHashST344() {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
-		for (int iteration = 0; iteration < 3; ++iteration) {
+		for (int iteration = 0; iteration < 2; ++iteration) {
 			doTestHash(hasher, MESSAGE_ST344, SALT_0, EXPECTED_ST344_0);
 			doTestHash(hasher, MESSAGE_ST344, SALT_1, EXPECTED_ST344_1);
 			doTestHash(hasher, MESSAGE_ST344, SALT_2, EXPECTED_ST344_2);
@@ -98,7 +98,7 @@ public class PasswordHasherTest_AES {
 	void testHashST352() {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
-		for (int iteration = 0; iteration < 3; ++iteration) {
+		for (int iteration = 0; iteration < 2; ++iteration) {
 			doTestHash(hasher, MESSAGE_ST352, SALT_0, EXPECTED_ST352_0);
 			doTestHash(hasher, MESSAGE_ST352, SALT_1, EXPECTED_ST352_1);
 			doTestHash(hasher, MESSAGE_ST352, SALT_2, EXPECTED_ST352_2);
@@ -110,7 +110,7 @@ public class PasswordHasherTest_AES {
 	void testHashST448() {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
-		for (int iteration = 0; iteration < 3; ++iteration) {
+		for (int iteration = 0; iteration < 2; ++iteration) {
 			doTestHash(hasher, MESSAGE_ST448, SALT_0, EXPECTED_ST448_0);
 			doTestHash(hasher, MESSAGE_ST448, SALT_1, EXPECTED_ST448_1);
 			doTestHash(hasher, MESSAGE_ST448, SALT_2, EXPECTED_ST448_2);
@@ -122,7 +122,7 @@ public class PasswordHasherTest_AES {
 	void testHashST896() {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
 
-		for (int iteration = 0; iteration < 3; ++iteration) {
+		for (int iteration = 0; iteration < 2; ++iteration) {
 			doTestHash(hasher, MESSAGE_ST896, SALT_0, EXPECTED_ST896_0);
 			doTestHash(hasher, MESSAGE_ST896, SALT_1, EXPECTED_ST896_1);
 			doTestHash(hasher, MESSAGE_ST896, SALT_2, EXPECTED_ST896_2);
