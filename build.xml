@@ -16,5 +16,6 @@
 	<target depends="_all" name="rebuild"/>
 	<target depends="_all" name="compile"/>
 	<target depends="_all" name="jar"/>
+	<target depends="_all" name="tests"/>
 	<target depends="_all" name="clean"/>
 </project>

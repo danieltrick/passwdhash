@@ -75,4 +75,6 @@
 			</manifest>
 		</jar>
 	</target>
+
+	<target name="tests"/>
 </project>
