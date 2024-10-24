@@ -1,4 +1,4 @@
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="passwdhash-lib" default="rebuild">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="passwdhash-lib" default="release">
 	<property name="dir.src" location="src"/>
 	<property name="dir.test" location="test"/>
 	<property name="dir.lib" location="lib"/>
@@ -12,8 +12,8 @@
 		</filterchain>
 	</loadresource>
 
-	<target name="rebuild" depends="clean,jar">
-		<echo message="Rebuild completed."/>
+	<target name="release" depends="clean,tests,jar">
+		<echo message="Release done."/>
 	</target>
 
 	<target name="clean">

@@ -1,5 +1,5 @@
-<project name="passwdhash" default="rebuild">
-	<condition property="target.name" value="${ant.project.invoked-targets}" else="rebuild">
+<project name="passwdhash" default="release">
+	<condition property="target.name" value="${ant.project.invoked-targets}" else="release">
 		<and>
 			<isset property="ant.project.invoked-targets"/>
 			<not>
@@ -8,14 +8,14 @@
 		</and>
 	</condition>
 
-	<target name="_all">
-		<ant target="${target.name}" useNativeBasedir="true" antfile="library/build.xml"/>
+	<target name="_subdirs">
+		<ant target="${target.name}" useNativeBasedir="true" antfile="core/build.xml"/>
 		<ant target="${target.name}" useNativeBasedir="true" antfile="frontend/build.xml"/>
 	</target>
 
-	<target depends="_all" name="rebuild"/>
-	<target depends="_all" name="compile"/>
-	<target depends="_all" name="jar"/>
-	<target depends="_all" name="tests"/>
-	<target depends="_all" name="clean"/>
+	<target depends="_subdirs" name="release"/>
+	<target depends="_subdirs" name="compile"/>
+	<target depends="_subdirs" name="jar"/>
+	<target depends="_subdirs" name="tests"/>
+	<target depends="_subdirs" name="clean"/>
 </project>

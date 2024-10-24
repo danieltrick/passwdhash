@@ -1,9 +1,8 @@
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="passwdhash-cli" default="rebuild">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="passwdhash-cli" default="release">
 	<property name="dir.src" location="src"/>
 	<property name="dir.bin" location="bin"/>
 	<property name="dir.lib" location="lib"/>
 	<property name="dir.etc" location="etc"/>
-	<property name="dir.dep" location="../library/dist"/>
 	<property name="dir.out" location="dist"/>
 
 	<loadresource property="jdk.version">
@@ -13,11 +12,13 @@
 		</filterchain>
 	</loadresource>
 
-	<fileset dir="${dir.lib}" includes="*.jar" id="fileset.jars.lib"/>
-	<fileset dir="${dir.dep}" includes="passwdhash*.jdk-${jdk.version}.jar" id="fileset.jars.dep"/>
+	<property name="dir.core.lib" location="../core/dist"/>
 
-	<target name="rebuild" depends="clean,jar">
-		<echo message="Rebuild completed."/>
+	<fileset dir="${dir.lib}" includes="*.jar" id="fileset.jars"/>
+	<fileset dir="${dir.core.lib}" includes="passwdhash*.jdk-${jdk.version}.jar" id="fileset.core"/>
+
+	<target name="release" depends="clean,tests,jar">
+		<echo message="Release done."/>
 	</target>
 
 	<target name="clean">
@@ -32,7 +33,7 @@
 	<target name="check-library">
 		<fail message="Error: Must build the 'passwdhash' library first!">
 			<condition>
-				<equals arg1="${toString:fileset.jars.dep}" arg2="" trim="true"/>
+				<equals arg1="${toString:fileset.core}" arg2="" trim="true"/>
 			</condition>
 		</fail>
 	</target>
@@ -52,8 +53,8 @@
 		<javac srcdir="${dir.src}" destdir="${dir.bin}" includeantruntime="false">
 			<classpath>
 				<path>
-					<fileset refid="fileset.jars.lib"/>
-					<fileset refid="fileset.jars.dep"/>
+					<fileset refid="fileset.jars"/>
+					<fileset refid="fileset.core"/>
 				</path>
 			</classpath>
 		</javac>
@@ -65,13 +66,13 @@
 		</delete>
 		<jar destfile="${dir.out}/${ant.project.name}.jdk-${jdk.version}.jar" basedir="${dir.bin}">
 			<zipfileset src="${dir.etc}/jar-in-jar-loader.zip"/>
-			<fileset refid="fileset.jars.lib"/>
-			<fileset refid="fileset.jars.dep"/>
+			<fileset refid="fileset.jars"/>
+			<fileset refid="fileset.core"/>
 			<manifest>
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
 				<attribute name="Class-Path" value="."/>
 				<attribute name="Rsrc-Main-Class" value="de.fraunhofer.sit.passwordhash.cli.Main"/>
-				<attribute name="Rsrc-Class-Path" value="./ ${toString:fileset.jars.dep} ${toString:fileset.jars.lib}"/>
+				<attribute name="Rsrc-Class-Path" value="./ ${toString:fileset.core} ${toString:fileset.jars}"/>
 			</manifest>
 		</jar>
 	</target>

@@ -16,8 +16,6 @@ public class PasswordHasher_ChaCha20 implements PasswordHasher {
 
 	private static final String ALGORITHM_NAME_CIPHER = "ChaCha20/None/NoPadding";
 
-	private static final String PARAMETER_SPEC_CLASS = "javax.crypto.spec.ChaCha20ParameterSpec";
-
 	private static final int BLOCK_SIZE = 32, SALT_SIZE = 12, DEFAULT_ROUNDS = 1499977;
 
 	private static final byte[] INITIALIZER = {
@@ -27,14 +25,33 @@ public class PasswordHasher_ChaCha20 implements PasswordHasher {
 		(byte) 0xA7, (byte) 0x84, (byte) 0xD9, (byte) 0x04, (byte) 0x51, (byte) 0x90, (byte) 0xCF, (byte) 0xEF
 	};
 
+	private static final class ParameterSpecHolder {
+		static final String CLASS_NAME = "javax.crypto.spec.ChaCha20ParameterSpec";
+
+		static final Constructor<?> CONSTRUCTOR;
+		static {
+			try {
+				CONSTRUCTOR = Class.forName(CLASS_NAME).getConstructor(byte[].class, int.class);
+			} catch (final Exception e) {
+				throw new Error("failed to initialize parameter spec constructor!", e);
+			}			
+		}
+
+		public static AlgorithmParameterSpec newInstance(final byte[] nonce, final int counter) {
+			try {
+				return (AlgorithmParameterSpec) CONSTRUCTOR.newInstance(nonce, counter);
+			} catch (Exception e) {
+				throw new RuntimeException("failed to create instance!", e);
+			}
+		}
+	}
+	
 	private final long rounds;
 
 	private final KeyHolder key0 = new KeyHolder();
 	private final KeyHolder key1 = new KeyHolder();
 
 	private final Cipher cipher;
-
-	private final Constructor<?> parameterSpecConstructor;
 
 	public PasswordHasher_ChaCha20() {
 		this(DEFAULT_ROUNDS);
@@ -47,13 +64,6 @@ public class PasswordHasher_ChaCha20 implements PasswordHasher {
 			cipher = Cipher.getInstance(ALGORITHM_NAME_CIPHER);
 		} catch (final GeneralSecurityException e) {
 			throw new Error("failed to create cipher instance!", e);
-		}
-
-		try {
-			final Class<?> clazz = Class.forName(PARAMETER_SPEC_CLASS);
-			parameterSpecConstructor = clazz.getConstructor(byte[].class, int.class);
-		} catch (final Exception e) {
-			throw new Error("failed to initialize parameter spec constructor!", e);
 		}
 	}
 
@@ -147,7 +157,7 @@ public class PasswordHasher_ChaCha20 implements PasswordHasher {
 		}
 
 		try {
-			return (AlgorithmParameterSpec) parameterSpecConstructor.newInstance(nonce, 1);
+			return (AlgorithmParameterSpec) ParameterSpecHolder.newInstance(nonce, 1);
 		} catch (final Exception e) {
 			throw new Error("failed to create parameter spec instance!", e);
 		} finally {

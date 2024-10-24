@@ -22,19 +22,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 import de.fraunhofer.sit.passwordhash.PasswordHasher;
 import de.fraunhofer.sit.passwordhash.PasswordManager;
 import de.fraunhofer.sit.passwordhash.PasswordMode;
+import de.fraunhofer.sit.passwordhash.Version;
 import de.fraunhofer.sit.passwordhash.cli.utils.CloseableSet;
 import de.fraunhofer.sit.passwordhash.cli.utils.SqlHashSet;
 
 public class Main {
 
-	private static final PasswordMode mode = parseMode(System.getProperty("passwdhash.mode"), PasswordMode.AES);
+	private static final PasswordMode mode = parseMode(System.getProperty("passwdhash.mode"), PasswordManager.DEFAULT);
 	private static final long hashRounds = parseLong(System.getProperty("passwdhash.rounds"), -1L);
 	private static final int threadCount = Runtime.getRuntime().availableProcessors();
 	private static final ExecutorService executor = Executors.newFixedThreadPool(addSaturating(threadCount, 2));
 
 	private static volatile boolean collision = false;
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IOException {
+		System.out.printf("Password Hash v%s%n", getVersionString(Version.MAJOR, Version.MINOR, Version.PATCH));
+
 		if ((args.length < 1) || args[0].isEmpty()) {
 			System.out.println("Error: Required argument is missing!");
 			return;
@@ -110,7 +114,7 @@ public class Main {
 			this.queue_src = Objects.requireNonNull(queue_src);
 			this.queue_dst = Objects.requireNonNull(queue_dst);
 			this.salts = Objects.requireNonNull(salts);
-			System.out.println(this.hasher = PasswordManager.getInstance(mode, hashRounds));
+			this.hasher = PasswordManager.getInstance(mode, hashRounds);
 			pending.incrementAndGet();
 		}
 
@@ -217,5 +221,14 @@ public class Main {
 		}
 
 		return defaultValue;
+	}
+
+	@SuppressWarnings("unused")
+	private static String getVersionString(final int major, final int minor, final int patch) {
+		if (patch > 0) {
+			return String.format("%d.%02d-%d", major, minor, patch);
+		} else {			
+			return String.format("%d.%02d", major, minor);
+		}
 	}
 }

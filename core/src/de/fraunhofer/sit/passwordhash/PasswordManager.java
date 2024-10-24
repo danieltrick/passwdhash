@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
 
 public class PasswordManager {
 
-	private static final PasswordMode DEFAULT = PasswordMode.AES;
+	public static final PasswordMode DEFAULT = PasswordMode.AES;
 
 	private static final class Base64Holder {
 		static final Encoder ENCODER = Base64.getUrlEncoder().withoutPadding();

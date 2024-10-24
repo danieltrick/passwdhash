@@ -40,7 +40,7 @@ jobs:
         with:
           optional-tasks: true
           version: latest
-      - run: ant
+      - run: ant jar
       - uses: actions/upload-artifact@v4
         with:
           name: dist.passwdhash-lib.jdk-${{ matrix.jdk }}
