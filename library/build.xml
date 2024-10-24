@@ -1,5 +1,7 @@
-<project name="passwdhash-lib" default="rebuild">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="passwdhash-lib" default="rebuild">
 	<property name="dir.src" location="src"/>
+	<property name="dir.test" location="test"/>
+	<property name="dir.lib" location="lib"/>
 	<property name="dir.bin" location="bin"/>
 	<property name="dir.out" location="dist"/>
 
@@ -17,6 +19,7 @@
 	<target name="clean">
 		<delete includeemptydirs="true" verbose="true">
 			<fileset dir="${dir.bin}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+			<fileset dir="${dir.lib}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
 	</target>
@@ -33,5 +36,38 @@
 			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
 		<jar destfile="${dir.out}/${ant.project.name}.jdk-${jdk.version}.jar" basedir="${dir.bin}"/>
+	</target>
+
+	<target name="tests" depends="compile-tests">
+		<junitlauncher printSummary="true" haltOnFailure="true">
+			<classpath>
+				<pathelement location="${dir.bin}"/>
+				<fileset dir="${dir.lib}" includes="*.test.jar"/>
+			</classpath>
+			<testclasses>
+				<fileset dir="${dir.bin}"/>
+				<listener type="legacy-brief" sendSysOut="true"/>
+			</testclasses>
+		</junitlauncher>
+	</target>
+
+	<target name="compile-tests" depends="ivy-retrieve-tests,compile">
+		<delete includeemptydirs="true" verbose="true">
+			<fileset dir="${dir.bin}" includes="**/test/**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+		</delete>
+		<javac srcdir="${dir.test}" destdir="${dir.bin}" includeantruntime="false">
+			<classpath>
+				<pathelement location="${dir.bin}"/>
+				<fileset dir="${dir.lib}" includes="*.test.jar"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="ivy-retrieve-tests">
+		<delete includeemptydirs="true" verbose="true">
+			<fileset dir="${dir.lib}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+		</delete>
+		<ivy:resolve refresh="true" file="${basedir}/ivy.xml" conf="test"/>
+		<ivy:retrieve pattern="${dir.lib}/[artifact]-[revision].[conf].[ext]" file="${basedir}/ivy.xml" conf="test"/>
 	</target>
 </project>

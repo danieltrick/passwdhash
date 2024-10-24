@@ -18,7 +18,7 @@ public class SaltGenerator {
 		(byte)0x88, (byte)0x8C, (byte)0x1E, (byte)0xE2 
 	};
 
-	private static class RandomHolder {
+	private static class SecureRandomHolder {
 		public static final SecureRandom INSTANCE;
 		static {
 			try {
@@ -42,27 +42,20 @@ public class SaltGenerator {
 	}
 
 	private static final Object mutex = new Object();
-	private static long lastTimestamp = Instant.EPOCH.toEpochMilli();
+	private static long lastTimestamp = -1L;
 
 	private SaltGenerator() {
 		throw new IllegalAccessError();
 	}
 
 	public static byte[] generateSalt(final int size) {
-		if (size < Long.BYTES) {
+		if (size < 12) {
 			throw new IllegalArgumentException("Salt size is too small!");
 		}
 
-		final int blocks = Math.addExact(size, Integer.BYTES - 1) / Integer.BYTES;
-		final ByteBuffer buffer = ByteBuffer.allocate(Math.multiplyExact(Integer.BYTES, blocks));
-
-		buffer.putLong(nextTimestamp());
-
-		while (buffer.hasRemaining()) {
-			buffer.putInt(RandomHolder.INSTANCE.nextInt());
-		}
-
-		final byte[] saltArray = buffer.array();
+		final byte[] saltArray = new byte[size];
+		SecureRandomHolder.INSTANCE.nextBytes(saltArray);
+		ByteBuffer.wrap(saltArray).putLong(0, nextTimestamp());
 
 		synchronized(CipherHolder.INSTANCE) {
 			try {
@@ -76,13 +69,14 @@ public class SaltGenerator {
 	}
 
 	private static long nextTimestamp() {
-		synchronized(mutex) {
-			long timestamp = Instant.now().toEpochMilli();
-			while (timestamp == lastTimestamp) {
-				Thread.yield();
-				timestamp = Instant.now().toEpochMilli();
+		for (;;) {
+			synchronized(mutex) {
+				long timestamp = System.nanoTime();
+				if (timestamp > lastTimestamp) {
+					return (lastTimestamp = timestamp);
+				}
 			}
-			return lastTimestamp = timestamp;
+			Thread.yield();
 		}
 	}
 }

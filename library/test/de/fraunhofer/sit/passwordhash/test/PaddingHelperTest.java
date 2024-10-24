@@ -1,8 +1,9 @@
 package de.fraunhofer.sit.passwordhash.test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.fraunhofer.sit.passwordhash.impl.PaddingHelper;
@@ -27,7 +28,7 @@ public class PaddingHelperTest {
 				}
 
 				final byte[] padded = PaddingHelper.addPadding(BLOCK_SIZE, data);
-				Assert.assertArrayEquals(expected, padded);
+				assertArrayEquals(expected, padded);
 			}
 		}
 	}

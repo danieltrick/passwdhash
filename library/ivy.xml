@@ -1,0 +1,10 @@
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+	<info organisation="de.fraunhofer.sit" module="passwdhash-lib" status="release"/>
+	<configurations defaultconf="test">
+		<conf name="test"/>
+	</configurations>
+	<dependencies>
+		<dependency org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.11.3" conf="test->default"/>
+		<dependency org="org.junit.platform" name="junit-platform-launcher" rev="1.11.3" conf="test->default"/>
+	</dependencies>
+</ivy-module>

@@ -2,8 +2,11 @@ package de.fraunhofer.sit.passwordhash.test;
 
 import static de.fraunhofer.sit.passwordhash.utils.HexString.bytesToHex;
 import static de.fraunhofer.sit.passwordhash.utils.HexString.hexToBytes;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -130,21 +133,21 @@ public class PasswordHasherTest_ChaCha20 {
 	@Test
 	public void testInvalidArgs() {
 		final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.ChaCha20);
-		Assert.assertThrows(IllegalArgumentException.class, () -> hasher.compute(MESSAGE_EMPTY, new byte[15]));
+		assertThrows(IllegalArgumentException.class, () -> hasher.compute(MESSAGE_EMPTY, new byte[15]));
 	}
 
 	private static void doTestHash(final PasswordHasher hasher, final String message, final byte[] salt, final byte[] expected) {
-		Assert.assertNotNull(message);
-		Assert.assertNotNull(salt);
-		Assert.assertNotNull(expected);
+		assertNotNull(message);
+		assertNotNull(salt);
+		assertNotNull(expected);
 
-		Assert.assertTrue(salt.length == 12);
-		Assert.assertTrue(expected.length == 32);
+		assertTrue(salt.length == 12);
+		assertTrue(expected.length == 32);
 
 		final byte[] computed = hasher.compute(message, salt);
 		System.out.printf("%s <-- \"%s\"%n", bytesToHex(computed), message);
 
-		Assert.assertArrayEquals(expected, computed);
+		assertArrayEquals(expected, computed);
 	}
 
 	@AfterEach
