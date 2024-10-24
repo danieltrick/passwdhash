@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map.Entry;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -197,16 +196,26 @@ public class Main {
 		if (property != null) {
 			final String propertyTrimmed = property.trim();
 			if (!propertyTrimmed.isEmpty()) {
-				switch (propertyTrimmed.toLowerCase(Locale.US)) {
-				case "aes":
-					return PasswordMode.AES;
-				case "chacha20":
-					return PasswordMode.ChaCha20;
-				default:
-					throw new IllegalArgumentException("Invalid mode: \"" + propertyTrimmed + '"');
+				final PasswordMode[] modes = PasswordMode.values();
+				for (final PasswordMode mode : modes) {
+					if (mode.name().equalsIgnoreCase(propertyTrimmed)) {
+						return mode;
+					}
 				}
+				try {
+					final long value = Long.parseLong(propertyTrimmed);
+					if (value > 0L) {
+						for (final PasswordMode mode : modes) {
+							if (mode.id == value) {
+								return mode;
+							}
+						}
+					}
+				} catch (final NumberFormatException e) { }
+				throw new IllegalArgumentException("Invalid mode: \"" + propertyTrimmed + '"');
 			}
 		}
+
 		return defaultValue;
 	}
 }

@@ -1,6 +1,13 @@
 # Password Hash
 
-A secure password hashing library for Java.
+A secure password hashing library for Java, based on repeated application of ciphers.
+
+## Supported ciphers:
+
+| **Mode**                | **Description**                                |
+| ----------------------- | ---------------------------------------------- |
+| `PasswordMode.AES`      | AES-256 cipher (Rijndael)                      |
+| `PasswordMode.ChaCha20` | ChaCha20 stream ciphers by Daniel J. Bernstein |
 
 ## Getting started
 
@@ -10,9 +17,11 @@ A secure password hashing library for Java.
 private static final String PASSWORD = "PL6aZOztoVYUyi9";
 
 public static void main(String[] args) {
+	// Create a new hash from password, includes a new unique salt
 	final String hash = PasswordManager.create(PASSWORD);
 	System.out.println("Encoded hash: \"" + hash + "\"");
 
+	// Verify a password, using an existing salted hash value
 	final boolean isValid = PasswordManager.verify(PASSWORD, hash);
 	System.out.println("Verification: " + isValid);
 }
@@ -28,11 +37,15 @@ Verification: true
 
 ```java
 public static void main(String[] args) {
+	// Create a new "AES" PasswordHasher instance
 	final PasswordHasher hasher = PasswordManager.getInstance(PasswordMode.AES);
-	final byte[] salt = hasher.generateSalt();
-	final byte[] hash = hasher.compute(PASSWORD, salt);
 
+	// Generate a fresh salt value, the result is guaranteed to be unique
+	final byte[] salt = hasher.generateSalt();
 	System.out.println("Salt value: " + HexString.bytesToHex(salt));
+
+	// Compute the hash value from the given password and the given salt
+	final byte[] hash = hasher.compute(PASSWORD, salt);
 	System.out.println("Hash value: " + HexString.bytesToHex(hash));
 }
 ```
