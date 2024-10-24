@@ -11,6 +11,8 @@ A secure password hashing library for Java, based on repeated application of cip
 
 ## Getting started
 
+The following examples demonstrate how to use the *password hash* library in your code.
+
 ### Using the "high level" API:
 
 ```java
@@ -55,6 +57,22 @@ Example output:
 Salt value: E48EFAD261EDC601C81466AEB7C7A181
 Hash value: 8601ED4EACDEA9AEE9B7B98FD2C472C340477A439DE4F1047CB573152A34169E
 ```
+
+## Command-line Usage
+
+The *password hash* command-line tool is invoked as follows:
+```sh
+$ java -jar dist/passwdhash-cli.jar test-data/passwords.txt
+```
+
+### Properties
+
+Some influential system properties:
+
+| **Property**        | **Description**                                                         |
+| ------------------- | ----------------------------------------------------------------------- |
+| `passwdhash.mode`   | Select the password hashing mode (algorithm), e.g. `AES` or `ChaCha20`. |
+| `passwdhash.rounds` | The number of iterations to perform for each hash computation.          |
 
 ## Testing
 
