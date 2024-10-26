@@ -9,7 +9,7 @@
 	</condition>
 
 	<target name="_subdirs">
-		<ant target="${target.name}" useNativeBasedir="true" antfile="core/build.xml"/>
+		<ant target="${target.name}" useNativeBasedir="true" antfile="core-lib/build.xml"/>
 		<ant target="${target.name}" useNativeBasedir="true" antfile="frontend/build.xml"/>
 	</target>
 

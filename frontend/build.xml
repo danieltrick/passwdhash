@@ -4,8 +4,8 @@
 	<property name="dir.lib" location="lib"/>
 	<property name="dir.etc" location="etc"/>
 	<property name="dir.out" location="dist"/>
-	<property name="dir.root" location=".."/>
-	<property name="dir.core" location="../core/dist"/>
+	<property name="dir.root" location="../"/>
+	<property name="dir.core" location="${dir.root}/core-lib/dist"/>
 
 	<loadresource property="jdk.version">
 		<propertyresource name="ant.java.version"/>

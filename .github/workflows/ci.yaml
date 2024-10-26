@@ -24,7 +24,7 @@ jobs:
           version: latest
       - run: ant release
       - run: |
-          mv -v core/././dist/passwdhash-lib-jdk${{ matrix.jdk }}.jar passwdhash-${{ github.ref_name }}-lib-jdk${{ matrix.jdk }}.jar
+          mv -v core-lib/dist/passwdhash-lib-jdk${{ matrix.jdk }}.jar passwdhash-${{ github.ref_name }}-lib-jdk${{ matrix.jdk }}.jar
           mv -v frontend/dist/passwdhash-cli-jdk${{ matrix.jdk }}.jar passwdhash-${{ github.ref_name }}-cli-jdk${{ matrix.jdk }}.jar
       - uses: actions/upload-artifact@v4
         with:
