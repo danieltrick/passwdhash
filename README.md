@@ -4,10 +4,10 @@ A secure password hashing library for Java, based on repeated application of cip
 
 ## Supported ciphers:
 
-| **Mode**                | **Description**                                |
-| ----------------------- | ---------------------------------------------- |
-| `PasswordMode.AES`      | AES-256 cipher (Rijndael)                      |
-| `PasswordMode.ChaCha20` | ChaCha20 stream ciphers by Daniel J. Bernstein |
+| **Mode**                | **Description**                                | **Supported on** |
+| ----------------------- | ---------------------------------------------- | ---------------- |
+| `PasswordMode.AES`      | AES-256 cipher (Rijndael)                      | JDK 8, or later  |
+| `PasswordMode.ChaCha20` | ChaCha20 stream ciphers by Daniel J. Bernstein | JDK 11, or later |
 
 ## Getting started
 
@@ -67,12 +67,13 @@ $ java -jar dist/passwdhash-cli.jar test-data/passwords.txt
 
 ### Properties
 
-Some influential system properties:
+Some influential system properties for the command-line tool:
 
-| **Property**        | **Description**                                                         |
-| ------------------- | ----------------------------------------------------------------------- |
-| `passwdhash.mode`   | Select the password hashing mode (algorithm), e.g. `AES` or `ChaCha20`. |
-| `passwdhash.rounds` | The number of iterations to perform for each hash computation.          |
+| **Property**         | **Description**                                                         |
+| -------------------- | ----------------------------------------------------------------------- |
+| `passwdhash.mode`    | Select the password hashing mode (algorithm), e.g. `AES` or `ChaCha20`. |
+| `passwdhash.rounds`  | The number of iterations to perform for each hash computation.          |
+| `passwdhash.threads` | The number of worker threads. Defaults to auto-detection of CPU cores.  |
 
 ## Testing
 

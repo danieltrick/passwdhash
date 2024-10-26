@@ -28,14 +28,14 @@ import de.fraunhofer.sit.passwordhash.cli.utils.SqlHashSet;
 
 public class Main {
 
-	private static final PasswordMode mode = parseMode(System.getProperty("passwdhash.mode"), PasswordManager.DEFAULT);
 	private static final long hashRounds = parseLong(System.getProperty("passwdhash.rounds"), -1L);
-	private static final int threadCount = Runtime.getRuntime().availableProcessors();
+	private static final int processorCount = Runtime.getRuntime().availableProcessors();
+	private static final int threadCount = Math.max(1, parseInt(System.getProperty("passwdhash.threads"), processorCount));
 	private static final ExecutorService executor = Executors.newFixedThreadPool(addSaturating(threadCount, 2));
+	private static final PasswordMode mode = parseMode(System.getProperty("passwdhash.mode"), PasswordManager.DEFAULT);
 
 	private static volatile boolean collision = false;
 
-	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IOException {
 		System.out.printf("Password Hash v%s%n", getVersionString(Version.MAJOR, Version.MINOR, Version.PATCH));
 
@@ -177,6 +177,25 @@ public class Main {
 		}
 	}
 
+	private static int parseInt(final String property, final int defaultValue) {
+		if (property != null) {
+			final String propertyTrimmed = property.trim();
+			if (!propertyTrimmed.isEmpty()) {
+				try {
+					final int value = Integer.parseInt(propertyTrimmed);
+					if (value < 0) {
+						throw new NumberFormatException("Negative numbers are not allowed!");
+					}
+					return value;
+				} catch (final NumberFormatException e) {
+					throw new IllegalArgumentException("Invalid number: \"" + propertyTrimmed + '"', e);
+				}
+			}
+		}
+
+		return defaultValue;
+	}
+
 	private static long parseLong(final String property, final long defaultValue) {
 		if (property != null) {
 			final String propertyTrimmed = property.trim();
@@ -223,7 +242,6 @@ public class Main {
 		return defaultValue;
 	}
 
-	@SuppressWarnings("unused")
 	private static String getVersionString(final int major, final int minor, final int patch) {
 		if (patch > 0) {
 			return String.format("%d.%02d-%d", major, minor, patch);
