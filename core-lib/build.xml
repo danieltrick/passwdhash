@@ -55,7 +55,6 @@
 				<fileset dir="${dir.lib}" includes="*.test.jar"/>
 			</classpath>
 			<testclasses>
-				<fork forkMode="perTestClass"/>
 				<fileset dir="${dir.bin}"/>
 				<listener type="legacy-plain" sendSysOut="true"/>
 			</testclasses>
