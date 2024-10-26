@@ -22,14 +22,14 @@ jobs:
         with:
           optional-tasks: true
           version: latest
-      - run: ant release
-      - run: |
-          mv -v core-lib/dist/passwdhash-lib-jdk${{ matrix.jdk }}.jar passwdhash-${{ github.ref_name }}-lib-jdk${{ matrix.jdk }}.jar
-          mv -v frontend/dist/passwdhash-cli-jdk${{ matrix.jdk }}.jar passwdhash-${{ github.ref_name }}-cli-jdk${{ matrix.jdk }}.jar
+      - if: ${{ github.event_name == 'release' }}
+        run: ant -Dpasswdhash.release=${{ github.ref_name }}
+      - if: ${{ github.event_name != 'release' }}
+        run: ant
       - uses: actions/upload-artifact@v4
         with:
           name: dist.passwdhash.jdk-${{ matrix.jdk }}
-          path: passwdhash-*.jar
+          path: dist/*.jar
 
   release:
     if: ${{ github.event_name == 'release' }}

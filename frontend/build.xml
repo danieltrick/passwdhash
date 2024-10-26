@@ -5,7 +5,13 @@
 	<property name="dir.etc" location="etc"/>
 	<property name="dir.out" location="dist"/>
 	<property name="dir.root" location="../"/>
-	<property name="dir.core" location="${dir.root}/core-lib/dist"/>
+	<property name="dir.core.lib" location="${dir.root}/core-lib/dist"/>
+
+	<condition property="my.release" value="${passwdhash.release}" else="UNRELEASED">
+		<isset property="passwdhash.release"/>
+	</condition>
+
+	<property name="output.name" value="passwdhash-${my.release}-cli"/>
 
 	<loadresource property="jdk.version">
 		<propertyresource name="ant.java.version"/>
@@ -15,7 +21,7 @@
 	</loadresource>
 
 	<fileset dir="${dir.lib}" includes="*.jar" id="fileset.jars"/>
-	<fileset dir="${dir.core}" includes="passwdhash*-jdk${jdk.version}.jar" id="fileset.core"/>
+	<fileset dir="${dir.core.lib}" includes="passwdhash-${my.release}-*-jdk${jdk.version}.jar" id="fileset.core"/>
 
 	<target name="release" depends="clean,tests,jar">
 		<echo message="Release done."/>
@@ -64,7 +70,7 @@
 		<delete includeemptydirs="true" verbose="true">
 			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
-		<jar destfile="${dir.out}/${ant.project.name}-jdk${jdk.version}.jar" basedir="${dir.bin}">
+		<jar destfile="${dir.out}/${output.name}-jdk${jdk.version}.jar" basedir="${dir.bin}">
 			<zipfileset src="${dir.etc}/jar-in-jar-loader.zip"/>
 			<fileset refid="fileset.jars"/>
 			<fileset refid="fileset.core"/>
