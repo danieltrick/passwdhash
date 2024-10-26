@@ -20,8 +20,8 @@ public class PasswordHasher_AES implements PasswordHasher {
 
 	private static final int BLOCK_SIZE = 16, KEY_SIZE = 2 * BLOCK_SIZE, DEFAULT_ROUNDS = 499979;
 
-	private static final byte[] INITIALIZER_0 = hexToBytes("B7E151628AED2A6ABF7158809CF4F3C7"); // 1st 128-bit of 'e'
-	private static final byte[] INITIALIZER_1 = hexToBytes("62E7160F38B4DA56A784D9045190CFEF"); // 2nd 128-bit of 'e'
+	private final byte[] INITIALIZER_0 = hexToBytes("B7E151628AED2A6ABF7158809CF4F3C7"); // the 1st 128 bits of 'e'
+	private final byte[] INITIALIZER_1 = hexToBytes("62E7160F38B4DA56A784D9045190CFEF"); // the 2nd 128 bits of 'e'
 
 	private final long rounds;
 

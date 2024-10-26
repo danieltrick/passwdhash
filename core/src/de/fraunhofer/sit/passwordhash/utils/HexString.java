@@ -1,7 +1,6 @@
 package de.fraunhofer.sit.passwordhash.utils;
 
 import java.util.Arrays;
-import java.util.Locale;
 
 public class HexString {
 
@@ -9,7 +8,7 @@ public class HexString {
 		throw new UnsupportedOperationException();
 	}
 
-	private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+	private static final char[] HEX_ARRAY = "0123456789ABCDEFabcdef".toCharArray();
 
 	public static String bytesToHex(byte[] bytes) {
 		if (bytes == null) {
@@ -31,17 +30,18 @@ public class HexString {
 			throw new NullPointerException("byte array must not be null!");
 		}
 
-		final char[] hexChars = hexString.trim().toUpperCase(Locale.US).toCharArray();
-		if ((hexChars.length % 2) != 0) {
+		final String trimmedString = hexString.trim();
+		final int length;
+		if (((length = trimmedString.length()) % 2) != 0) {
 			throw new IllegalArgumentException("length of hex string must be a multiple of two!");
 		}
 
-		final byte[] bytes = new byte[hexChars.length / 2];
+		final byte[] bytes = new byte[length / 2];
 		int posIn = 0, posOut = 0;
 
-		while (posIn < hexChars.length) {
-			final int valueHi = Arrays.binarySearch(HEX_ARRAY, hexChars[posIn++]);
-			final int valueLo = Arrays.binarySearch(HEX_ARRAY, hexChars[posIn++]);
+		while (posIn < length) {
+			final int valueHi = parseHexChar(trimmedString.charAt(posIn++));
+			final int valueLo = parseHexChar(trimmedString.charAt(posIn++));
 			if ((valueHi < 0) || (valueLo < 0)) {
 				throw new IllegalArgumentException("invalid hex character encountered!");
 			}
@@ -49,5 +49,13 @@ public class HexString {
 		}
 
 		return bytes;
+	}
+
+	private static int parseHexChar(final char c) {
+		final int value = Arrays.binarySearch(HEX_ARRAY, c);
+		if (value > 15) {
+			return value - 6; /*lower case*/
+		}
+		return value;
 	}
 }

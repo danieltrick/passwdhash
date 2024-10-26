@@ -22,8 +22,6 @@ public class PasswordHasher_ChaCha20 implements PasswordHasher {
 
 	private static final int BLOCK_SIZE = 32, SALT_SIZE = 12, DEFAULT_ROUNDS = 1499977;
 
-	private static final byte[] INITIALIZER = hexToBytes("b7e151628aed2a6abf7158809cf4f3c762e7160f38b4da56a784d9045190cfef");
-
 	private static final class ParameterSpecHolder {
 		static final String CLASS_NAME = "javax.crypto.spec.ChaCha20ParameterSpec";
 
@@ -44,7 +42,10 @@ public class PasswordHasher_ChaCha20 implements PasswordHasher {
 			}
 		}
 	}
-	
+
+	private final byte[] INITIALIZER_0 = hexToBytes("243F6A8885A308D313198A2E03707344A4093822299F31D0082EFA98EC4E6C89"); // the first 256 bits of 'pi'
+	private final byte[] INITIALIZER_1 = hexToBytes("0000000000000000000000000000000000000000000000000000000000000000"); // zero bits
+
 	private final long rounds;
 
 	private final KeyHolder key0 = new KeyHolder(BLOCK_SIZE);
@@ -89,11 +90,11 @@ public class PasswordHasher_ChaCha20 implements PasswordHasher {
 			throw new IllegalArgumentException("salt has an invalid size! (must be 12 bytes)");
 		}
 
-		System.arraycopy(INITIALIZER, 0, key0.bytes, 0, BLOCK_SIZE);
-		Arrays.fill(key1.bytes, (byte) 0);
+		System.arraycopy(INITIALIZER_0, 0, key0.bytes, 0, BLOCK_SIZE);
+		System.arraycopy(INITIALIZER_1, 0, key1.bytes, 0, BLOCK_SIZE);
 
-		final AlgorithmParameterSpec param0 = initParameterSpec(salt, (byte) 0xAA);
-		final AlgorithmParameterSpec param1 = initParameterSpec(salt, (byte) 0x55);
+		final AlgorithmParameterSpec param0 = initParameters(salt, (byte) 0xAA);
+		final AlgorithmParameterSpec param1 = initParameters(salt, (byte) 0x55);
 
 		final byte[] padded = PaddingHelper.addPadding(BLOCK_SIZE, data);
 
@@ -125,7 +126,7 @@ public class PasswordHasher_ChaCha20 implements PasswordHasher {
 		cipher.doFinal(data, dataOffset, BLOCK_SIZE, key1.bytes, 0);
 
 		cipher.init(Cipher.ENCRYPT_MODE, key1, param1);
-		cipher.doFinal(data, dataOffset, BLOCK_SIZE, key0.bytes, 0);
+		cipher.doFinal(INITIALIZER_1, 0, BLOCK_SIZE, key0.bytes, 0);
 	}
 
 	private void invertKey() {
@@ -149,7 +150,9 @@ public class PasswordHasher_ChaCha20 implements PasswordHasher {
 		return val ^ (val >>> 31);
 	}
 
-	private AlgorithmParameterSpec initParameterSpec(final byte[] salt, final byte tweak) {
+	private AlgorithmParameterSpec initParameters(final byte[] salt, final byte tweak) {
+		assert (salt != null) && (salt.length == SALT_SIZE) && (tweak != 0);
+
 		final byte[] nonce = salt.clone();
 		for (int iPos = 0; iPos < SALT_SIZE; ++iPos) {
 			nonce[iPos] ^= tweak;
