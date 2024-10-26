@@ -1,5 +1,7 @@
 package de.fraunhofer.sit.passwordhash.impl;
 
+import static de.fraunhofer.sit.passwordhash.utils.HexString.hexToBytes;
+
 import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -8,9 +10,11 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
 
 import de.fraunhofer.sit.passwordhash.PasswordHasher;
+import de.fraunhofer.sit.passwordhash.utils.KeyHolder;
+import de.fraunhofer.sit.passwordhash.utils.PrimeFinder;
+import de.fraunhofer.sit.passwordhash.utils.SaltGenerator;
 
 public class PasswordHasher_ChaCha20 implements PasswordHasher {
 
@@ -18,12 +22,7 @@ public class PasswordHasher_ChaCha20 implements PasswordHasher {
 
 	private static final int BLOCK_SIZE = 32, SALT_SIZE = 12, DEFAULT_ROUNDS = 1499977;
 
-	private static final byte[] INITIALIZER = {
-		(byte) 0xB7, (byte) 0xE1, (byte) 0x51, (byte) 0x62, (byte) 0x8A, (byte) 0xED, (byte) 0x2A, (byte) 0x6A,
-		(byte) 0xBF, (byte) 0x71, (byte) 0x58, (byte) 0x80, (byte) 0x9C, (byte) 0xF4, (byte) 0xF3, (byte) 0xC7,
-		(byte) 0x62, (byte) 0xE7, (byte) 0x16, (byte) 0x0F, (byte) 0x38, (byte) 0xB4, (byte) 0xDA, (byte) 0x56,
-		(byte) 0xA7, (byte) 0x84, (byte) 0xD9, (byte) 0x04, (byte) 0x51, (byte) 0x90, (byte) 0xCF, (byte) 0xEF
-	};
+	private static final byte[] INITIALIZER = hexToBytes("b7e151628aed2a6abf7158809cf4f3c762e7160f38b4da56a784d9045190cfef");
 
 	private static final class ParameterSpecHolder {
 		static final String CLASS_NAME = "javax.crypto.spec.ChaCha20ParameterSpec";
@@ -48,8 +47,8 @@ public class PasswordHasher_ChaCha20 implements PasswordHasher {
 	
 	private final long rounds;
 
-	private final KeyHolder key0 = new KeyHolder();
-	private final KeyHolder key1 = new KeyHolder();
+	private final KeyHolder key0 = new KeyHolder(BLOCK_SIZE);
+	private final KeyHolder key1 = new KeyHolder(BLOCK_SIZE);
 
 	private final Cipher cipher;
 
@@ -162,31 +161,6 @@ public class PasswordHasher_ChaCha20 implements PasswordHasher {
 			throw new Error("failed to create parameter spec instance!", e);
 		} finally {
 			Arrays.fill(nonce,(byte) 0);
-		}
-	}
-
-	@SuppressWarnings("serial")
-	private final class KeyHolder implements SecretKey {
-		final byte[] bytes = new byte[BLOCK_SIZE];
-
-		@Override
-		public String getAlgorithm() {
-			return "ChaCha20";
-		}
-
-		@Override
-		public String getFormat() {
-			return "RAW";
-		}
-
-		@Override
-		public byte[] getEncoded() {
-			return bytes;
-		}
-
-		@Override
-		public void destroy() {
-			Arrays.fill(bytes, (byte) 0);
 		}
 	}
 }

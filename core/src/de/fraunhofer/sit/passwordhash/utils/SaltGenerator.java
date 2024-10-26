@@ -1,4 +1,4 @@
-package de.fraunhofer.sit.passwordhash.impl;
+package de.fraunhofer.sit.passwordhash.utils;
 
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
@@ -70,12 +70,16 @@ public class SaltGenerator {
 	private static long nextTimestamp() {
 		for (;;) {
 			synchronized(mutex) {
-				long timestamp = System.nanoTime();
+				long timestamp = System.currentTimeMillis();
 				if (timestamp > lastTimestamp) {
 					return (lastTimestamp = timestamp);
 				}
 			}
-			Thread.yield();
+			try {
+				Thread.sleep(1L);
+			} catch (final InterruptedException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 }

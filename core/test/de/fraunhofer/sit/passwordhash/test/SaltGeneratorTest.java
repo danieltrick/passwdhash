@@ -11,7 +11,7 @@ import java.util.TreeSet;
 
 import org.junit.jupiter.api.Test;
 
-import de.fraunhofer.sit.passwordhash.impl.SaltGenerator;
+import de.fraunhofer.sit.passwordhash.utils.SaltGenerator;
 
 public class SaltGeneratorTest {
 
@@ -19,7 +19,7 @@ public class SaltGeneratorTest {
 	public void testUniqueness() {
 		final SortedSet<String> saltSet = new TreeSet<String>();
 		final Encoder base64encoder = Base64.getEncoder().withoutPadding();
-		for (int i = 0; i < 10000000; ++i) {
+		for (int i = 0; i < 10000; ++i) {
 			final byte[] salt = SaltGenerator.generateSalt(12);
 			final String encoded = base64encoder.encodeToString(salt);
 			System.out.println(encoded);

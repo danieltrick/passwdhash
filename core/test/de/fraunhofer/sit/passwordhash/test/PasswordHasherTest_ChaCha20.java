@@ -147,7 +147,7 @@ public class PasswordHasherTest_ChaCha20 {
 		assertTrue(expected.length == 32);
 
 		final byte[] computed = hasher.compute(message, salt);
-		System.out.printf("%s <-- \"%s\"%n", bytesToHex(computed), message);
+		System.out.printf("%s <-- \"%s\" (0x%s)%n", bytesToHex(computed), message, bytesToHex(salt));
 
 		assertArrayEquals(expected, computed);
 	}

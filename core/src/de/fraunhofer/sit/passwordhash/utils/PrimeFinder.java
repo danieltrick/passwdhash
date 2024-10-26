@@ -1,4 +1,4 @@
-package de.fraunhofer.sit.passwordhash.impl;
+package de.fraunhofer.sit.passwordhash.utils;
 
 import java.math.BigInteger;
 

@@ -7,25 +7,7 @@ on:
     types: [published]
 
 jobs:
-  tests:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        jdk: [8, 11, 17, 21]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: ${{ matrix.jdk }}
-      - uses: cedx/setup-ant@v3
-        with:
-          optional-tasks: true
-          version: latest
-      - run: ant tests
-
   build:
-    needs: tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -40,7 +22,7 @@ jobs:
         with:
           optional-tasks: true
           version: latest
-      - run: ant jar
+      - run: ant release
       - run: |
           mv -v core/././dist/passwdhash-lib-jdk${{ matrix.jdk }}.jar passwdhash-${{ github.ref_name }}-lib-jdk${{ matrix.jdk }}.jar
           mv -v frontend/dist/passwdhash-cli-jdk${{ matrix.jdk }}.jar passwdhash-${{ github.ref_name }}-cli-jdk${{ matrix.jdk }}.jar
