@@ -29,6 +29,7 @@
 			<fileset dir="${dir.lib}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
+		<ivy:cleancache/>
 	</target>
 
 	<target name="compile">
@@ -42,7 +43,7 @@
 		<delete includeemptydirs="true" verbose="true">
 			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
-		<jar destfile="${dir.out}/${output.name}-jdk${jdk.version}.jar" basedir="${dir.bin}">
+		<jar destfile="${dir.out}/${output.name}-jdk${jdk.version}.jar" basedir="${dir.bin}" excludes="**/.gitkeep">
 			<fileset dir="${dir.root}" includes="LICENSE"/>
 		</jar>
 	</target>

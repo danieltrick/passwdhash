@@ -8,13 +8,15 @@
 		</and>
 	</condition>
 
-	<property name="dir.dist" location="dist"/>
-	<property name="dir.core" location="core-lib"/>
-	<property name="dir.main" location="frontend"/>
+	<property name="dir.main.out" location="dist"/>
+	<property name="dir.core-lib" location="core-lib"/>
+	<property name="dir.frontend" location="frontend"/>
+	<property name="dir.core-lib.dist" location="${dir.core-lib}/dist"/>
+	<property name="dir.frontend.dist" location="${dir.frontend}/dist"/>
 
 	<target name="_subdirs">
-		<ant target="${target.name}" useNativeBasedir="true" antfile="${dir.core}/build.xml"/>
-		<ant target="${target.name}" useNativeBasedir="true" antfile="${dir.main}/build.xml"/>
+		<ant target="${target.name}" useNativeBasedir="true" antfile="${dir.core-lib}/build.xml"/>
+		<ant target="${target.name}" useNativeBasedir="true" antfile="${dir.frontend}/build.xml"/>
 	</target>
 
 	<target depends="_subdirs" name="compile"/>
@@ -23,17 +25,17 @@
 
 	<target depends="_subdirs" name="release">
 		<delete includeemptydirs="true" verbose="true">
-			<fileset dir="${dir.dist}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+			<fileset dir="${dir.main.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
-		<copy todir="${dir.dist}" overwrite="true" force="true">
-			<fileset dir="${dir.core}/dist" includes="**/*.jar" defaultexcludes="false"/>
-			<fileset dir="${dir.main}/dist" includes="**/*.jar" defaultexcludes="false"/>
+		<copy todir="${dir.main.out}" overwrite="true" force="true">
+			<fileset dir="${dir.core-lib.dist}" includes="**/*.jar" defaultexcludes="false"/>
+			<fileset dir="${dir.frontend.dist}" includes="**/*.jar" defaultexcludes="false"/>
 		</copy>
 	</target>
 
 	<target depends="_subdirs" name="clean">
 		<delete includeemptydirs="true" verbose="true">
-			<fileset dir="${dir.dist}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
+			<fileset dir="${dir.main.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
 	</target>
 </project>

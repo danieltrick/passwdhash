@@ -70,7 +70,7 @@
 		<delete includeemptydirs="true" verbose="true">
 			<fileset dir="${dir.out}" includes="**/*" excludes="**/.gitkeep" defaultexcludes="false"/>
 		</delete>
-		<jar destfile="${dir.out}/${output.name}-jdk${jdk.version}.jar" basedir="${dir.bin}">
+		<jar destfile="${dir.out}/${output.name}-jdk${jdk.version}.jar" basedir="${dir.bin}" excludes="**/.gitkeep">
 			<zipfileset src="${dir.etc}/jar-in-jar-loader.zip"/>
 			<fileset refid="fileset.jars"/>
 			<fileset refid="fileset.core"/>
